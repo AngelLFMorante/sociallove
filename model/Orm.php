@@ -48,11 +48,14 @@ class Orm
         return $bd->queryOne($sql, [$usuario->email]);
     }
     /* Sacamos toda la información importante para ver en el listado del usuario al hacer login */
-    function listadoSesionIni($login)
+    function listadoSesionIni($pagina = 1,$login)
     {
+        global $config;
+        $limite = $config["post_per_page"];
+        $offset = ($pagina -1) * $limite;
         return  Klasto::getInstance()->query(
-            "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like (SELECT busco from usuario where login=?) ",
-            [$login],"model\Usuario"
+            "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like(SELECT busco from usuario where login=?) EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?)  LIMIT $limite OFFSET $offset",
+            [$login,$login],"model\Usuario"
         );
     }
 

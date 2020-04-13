@@ -46,12 +46,11 @@ class PostController extends Controller
         return $sacarListaMenu;
     }
     //sacamos datos del listado de la sesion.
-    function listaSesion($genero){
+    function listaSesion($pagina,$genero){
 
         /* Aqui hay que poner un paginador por si aumentan las mujeres u hombres, poder verlos. */
-        $sacarLista = (new Orm)->listadoSesionIni($genero);
+        $sacarLista = (new Orm)->listadoSesionIni($pagina,$genero);
         $sacarPersonas = (new Orm)->contadorPersonas($genero);
-
          $i=0;
 
         for($i= 0; $i<$sacarPersonas->cantidadPersonas; $i++){
@@ -74,13 +73,20 @@ class PostController extends Controller
         echo json_encode($contador["contador"]);
     }
     //sacamos la busqueda de genero elegido por el usuario.
-    function listadoSesionIniciada(){
+    function listadoSesionIniciada($pagina = 1){
         /* Aqui hay que poner un paginador */
-        
+        global $config;
+        global $URL_PATH;
         $login = $_SESSION["login"];
-        $sacarLista = (new PostController)->listaSesion($login);
+        $sacarLista = (new PostController)->listaSesion($pagina = 1,$login);
         $hechizos = (new Orm)->contadorHechizos($login);
-        echo Ti::render("view/principal.phtml", compact("sacarLista","hechizos")); 
+
+        $cuenta = (new Orm)->contadorPersonas($login);
+        $numpaginas = ceil ($cuenta->cantidadPersonas / $config["post_per_page"]);
+        $title = "Listado";
+        $ruta = "$URL_PATH/listado/page/"; 
+
+        echo Ti::render("view/principal.phtml", compact("sacarLista","hechizos","cuenta", "numpaginas", "pagina", "ruta","title")); 
 
     }
 

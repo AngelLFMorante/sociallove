@@ -29,6 +29,7 @@ Macaw::get($URL_PATH . '/logout', "controller\UserController@hacerLogout");
 /* ******** */
 //sesion iniciado sacar lista
 Macaw::get($URL_PATH . '/listado', "controller\PostController@listadoSesionIniciada");
+Macaw::get($URL_PATH . '/listado/page/(:num)', "controller\PostController@listadoSesionIniciada");
 //busqueda de personas
 Macaw::post($URL_PATH . '/busqueda', "controller\PostController@busquedaUsuario");
 //mirar el correo
