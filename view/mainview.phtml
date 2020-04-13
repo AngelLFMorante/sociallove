@@ -2,9 +2,10 @@
 // necesitamos la trayectoria de la URL para formar las rutas:
 global $URL_PATH;
 global $login_url;
-\dawfony\Ti::extend("view/headerView.phtml"); 
-\dawfony\Ti::endExtend(); 
+\dawfony\Ti::extend("view/headerView.phtml");
+\dawfony\Ti::endExtend();
 ?>
+
 <body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
     background-repeat: repeat;
     background-color: #fbf6f9;">
@@ -72,7 +73,7 @@ global $login_url;
                                                     <td><i class="fa fa-user"></i>&nbsp;&nbsp;Hola <?= $_SESSION["login"] ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><a class="perfil-enlace" href="<?=$URL_PATH?>/zonavip"><i class="fas fa-magic"></i>&nbsp;&nbsp;Tienes <b style="color:pink"><?= $hechizos["hechizos"] ?></b> hechizos</a></td>
+                                                    <td><a class="perfil-enlace" href="<?= $URL_PATH ?>/zonavip"><i class="fas fa-magic"></i>&nbsp;&nbsp;Tienes <b style="color:pink"><?= $hechizos["hechizos"] ?></b> hechizos</a></td>
                                                 </tr>
                                                 <tr>
                                                     <td><i class="fas fa-star"></i><a class="perfil-enlace" href="<?= $URL_PATH ?>/perfil/<?= $_SESSION["login"] ?>">&nbsp;&nbsp;Ver Perfil</a></td>
@@ -104,9 +105,15 @@ global $login_url;
                             <?php $error_msg = $error_msg ?? ""; ?>
 
                             <?php if ($error_msg) : ?>
-                                <span Style=" color:red">
-                                    <?= $error_msg ?>
-                                </span>
+                                <script>
+                                Swal.fire({
+                                icon: 'error',
+                                type: 'info',
+                                title: 'Email o contraseña incorrecto.',
+                                timer: 3000,
+                                showConfirmButton: false
+                                });
+                            </script>
                             <?php endif; ?>
                             <form class="form-inline" action="<?= $URL_PATH ?>/login" method="post">
                                 <div class="form-group">
@@ -168,13 +175,13 @@ global $login_url;
                     <div class="inscripcion cajaInscripcion">
                         <br>
                         <h1 class="style-font">Inscripción gratuita</h1>
-                        <p  class="style-font">en menos de un minuto</p>
+                        <p class="style-font">en menos de un minuto</p>
                         <div class="">
                             <div class="text-center">
                                 <a href="" class="btn btn-block mb-4 flickr" data-toggle="modal" data-target="#modalContactForm">
                                     ME INSCRIBO</a>
                             </div>
-                            <a href="<?= $login_url ?>"  class="btn btn-block mb-4 btn-social btn-facebook style-font" id="fbook">
+                            <a href="<?= $login_url ?>" class="btn btn-block mb-4 btn-social btn-facebook style-font" id="fbook">
                                 <i class="fa fa-facebook"></i> Conexión vía Facebook </a>
 
                         </div>
@@ -188,7 +195,7 @@ global $login_url;
         <?php \dawfony\Ti::endBlock(); ?>
 
         <!-- ********************** Modal registro ******************************************* -->
-		<form action="<?= $URL_PATH ?>/postregistro" method="post" id="formuModal">
+        <form action="<?= $URL_PATH ?>/postregistro" method="post" id="formuModal">
             <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -213,13 +220,13 @@ global $login_url;
                             </div>
                             <div class="md-form mb-3">
                                 <i class="fas fa-user prefix grey-text"></i>
-                               <label for="prenombre" class="style-font">Nombre</label>
+                                <label for="prenombre" class="style-font">Nombre</label>
                                 <input type="text" id="prenombre" class="form-control validate" name="prenombre" onkeyup="comprobarPreNombre()" required>
 
                             </div>
                             <div class="md-form mb-3">
                                 <i class="fas fa-envelope prefix grey-text"></i>
-                             <label for="email" class="style-font">E-mail  &nbsp;&nbsp;<span id="checkemail"></span></label>
+                                <label for="email" class="style-font">E-mail &nbsp;&nbsp;<span id="checkemail"></span></label>
                                 <input type="email" id="email" class="form-control validate" name="email" onkeyup="comprobaremail()" onchange="comprobaremail()" required>
 
                             </div>
@@ -228,7 +235,7 @@ global $login_url;
                                 <label class="style-font">Contraseña</label>
                                 <div class="input-group">
                                     <input id="txtPassword" type="password" class="form-control" name="prepassword" onchange="cssvalidarprePassword()" onkeydown="cssvalidarprePassword()" required>
-                                    
+
                                     <div class="input-group-append">
                                         <button id="show_password" class="btn btn-dark" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
                                     </div>
