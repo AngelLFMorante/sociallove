@@ -128,7 +128,7 @@ class UserController extends Controller
 
 
         if(in_array($_FILES["foto"]["type"],$permitidos) && $_FILES["foto"]["size"] <= $limite_10mb) {
-            if($usuario->genero = "chcio"){
+            if($usuario->genero = "chico"){
                 move_uploaded_file($_FILES["foto"]["tmp_name"], "assets/fotosUsuarios/fotosChicos/" . $usuario->foto); //la muevo al directorio fotosChicos
             }else{
                 move_uploaded_file($_FILES["foto"]["tmp_name"], "assets/fotosUsuarios/fotosChicas/" . $usuario->foto); //la muevo al directorio fotosChicas
