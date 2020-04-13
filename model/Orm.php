@@ -52,10 +52,18 @@ class Orm
     {
         return  Klasto::getInstance()->query(
             "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like (SELECT busco from usuario where login=?) ",
-            [$login],
-            "model\Usuario"
+            [$login],"model\Usuario"
         );
     }
+
+    /* sacamos un count de todas las personas segun busqueda de género para sacar a todas esas personas que se registren de nuevo y aumente la base de datos */
+    function contadorPersonas($login){
+        return Klasto::getInstance()->queryOne(
+            "SELECT count(genero) as cantidadPersonas FROM usuario WHERE genero like (SELECT busco from usuario where login=?)  ",
+        [$login],"model\Usuario"
+        );
+    }
+
     /* sacamos el contador de hechizos del usuario */
     function contadorHechizos($login)
     {

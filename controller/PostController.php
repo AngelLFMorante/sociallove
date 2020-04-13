@@ -22,7 +22,7 @@ class PostController extends Controller
         $sacarListaMujeres = (new Orm)->listado();
         $numeros=array();
         $i=0;
-
+        
         while($i<12){
 
         $num=rand(0,23);
@@ -48,11 +48,13 @@ class PostController extends Controller
     //sacamos datos del listado de la sesion.
     function listaSesion($genero){
 
+        /* Aqui hay que poner un paginador por si aumentan las mujeres u hombres, poder verlos. */
         $sacarLista = (new Orm)->listadoSesionIni($genero);
-        $numeros=array();
-        $i=0;
+        $sacarPersonas = (new Orm)->contadorPersonas($genero);
 
-        for($i= 0; $i<24; $i++){
+         $i=0;
+
+        for($i= 0; $i<$sacarPersonas->cantidadPersonas; $i++){
             
             $sacarLista[$i] = [
             "fotos"=>$sacarLista[$i]->foto,
@@ -61,7 +63,7 @@ class PostController extends Controller
             "genero"=>$sacarLista[$i]->genero,
             "ubicacion"=>$sacarLista[$i]->ubicacion];
                 
-        } 
+        }  
         return $sacarLista;
     }
 
@@ -73,7 +75,8 @@ class PostController extends Controller
     }
     //sacamos la busqueda de genero elegido por el usuario.
     function listadoSesionIniciada(){
-
+        /* Aqui hay que poner un paginador */
+        
         $login = $_SESSION["login"];
         $sacarLista = (new PostController)->listaSesion($login);
         $hechizos = (new Orm)->contadorHechizos($login);
