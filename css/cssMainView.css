@@ -520,3 +520,52 @@ h6{
     background-color:pink;
     color:black;
 }
+
+.passforget-principal{
+    background-color:white;
+    margin-top:0;
+    width: auto;
+    height: 500px;
+}
+.passforget{
+    padding:10%; 
+    margin-left: 10%;
+    position: relative;
+    
+}
+.panel-head{
+    background-color: pink;
+    border-radius: 5px;
+    width: 100%;
+}
+.panel-title{
+    font-family: 'Special Elite', cursive;
+    font-size: 25px;
+    color:black;
+    text-align: center;
+}
+.inicio-pass{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    float:right; 
+    font-size: 80%; 
+    position: relative; 
+    top:0px;
+}
+.panel-info-pass{
+    width: 200%;
+}
+.btn-large{
+    width: 100px;
+}
+.form-pass{
+    position: relative;
+    margin-right: 25%;
+}
+.mail-pass{
+    border-radius: 10px;
+}
+.end-pass{
+    border-top: 1px solid#888; 
+    padding-top:15px; 
+    font-size:85%
+}

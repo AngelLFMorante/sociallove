@@ -41,7 +41,7 @@ class UserController extends Controller
         header("Location: $URL_PATH/");
     }
     /*****ALBERTO******/
-	public function formularioRegistro()
+    public function formularioRegistro()
     {
         global $URL_PATH;
         $sex = $_REQUEST["sex"];
@@ -60,7 +60,8 @@ class UserController extends Controller
         echo Ti::render("view/registroForm.phtml", $data);
     }
 
-    public function procesarRegistro() { //POST REGISTRO
+    public function procesarRegistro()
+    { //POST REGISTRO
         global $config;
         global $URL_PATH;
         $usuario = new Usuario;
@@ -68,20 +69,20 @@ class UserController extends Controller
 
         $usuario->login = sanitizar($_POST["login"] ?? ""); //name="login"
         $usuario->password = password_hash($_REQUEST["password"], PASSWORD_DEFAULT);
-        $repPassword =  sanitizar($_REQUEST["repassword"]);    //name="repassword"
+        $repPassword =  sanitizar($_REQUEST["repassword"]);    //name="repassword" /* Esta variable no hace nada */
         $usuario->sobreti = sanitizar($_REQUEST["sobreti"] ?? "");   //textarea sobreti
         /*CHECKBOX GUSTOS*/
         if (is_array($_POST['gustos'] ?? "")) {
-                $selected = '';
-                $num_gustos = count($_POST['gustos']);
-                $current = 0;
-                foreach ($_POST['gustos'] as $key => $value) {
-                    if ($current != $num_gustos-1)
-                        $selected .= $value.', ';
-                    else
-                        $selected .= $value.'.';
-                    $current++;
-                }
+            $selected = '';
+            $num_gustos = count($_POST['gustos']);
+            $current = 0;
+            foreach ($_POST['gustos'] as $key => $value) {
+                if ($current != $num_gustos - 1)
+                    $selected .= $value . ', ';
+                else
+                    $selected .= $value . '.';
+                $current++;
+            }
         } else {
             $selected = "";
         }
@@ -99,19 +100,19 @@ class UserController extends Controller
         $usuario->rol_id = "1";
         $usuario->rango_id = "0";
         $usuario->hechizos = "3";
-      
+
         /*CHECKBOX AFICCIONES*/
         if (is_array($_POST['aficciones'] ?? "")) {
-                $selectedaf = '';
-                $num_af = count($_POST['aficciones']);
-                $currentaf = 0;
-                foreach ($_POST['aficciones'] as $key => $v) {
-                    if ($currentaf != $num_af-1)
-                        $selectedaf .= $v.', ';
-                    else
-                        $selectedaf .= $v.'.';
-                        $currentaf++;
-                }
+            $selectedaf = '';
+            $num_af = count($_POST['aficciones']);
+            $currentaf = 0;
+            foreach ($_POST['aficciones'] as $key => $v) {
+                if ($currentaf != $num_af - 1)
+                    $selectedaf .= $v . ', ';
+                else
+                    $selectedaf .= $v . '.';
+                $currentaf++;
+            }
         } else {
             $selectedaf = "";
         }
@@ -127,43 +128,57 @@ class UserController extends Controller
         $limite_10mb = 10000000; //10mb maximo
 
 
-        if(in_array($_FILES["foto"]["type"],$permitidos) && $_FILES["foto"]["size"] <= $limite_10mb) {
-            if($usuario->genero = "chico"){
+        if (in_array($_FILES["foto"]["type"], $permitidos) && $_FILES["foto"]["size"] <= $limite_10mb) {
+            if ($usuario->genero = "chico") {
                 move_uploaded_file($_FILES["foto"]["tmp_name"], "assets/fotosUsuarios/fotosChicos/" . $usuario->foto); //la muevo al directorio fotosChicos
-            }else{
+            } else {
                 move_uploaded_file($_FILES["foto"]["tmp_name"], "assets/fotosUsuarios/fotosChicas/" . $usuario->foto); //la muevo al directorio fotosChicas
             }
         } else {
             $usuario->foto = "nofoto.png";
         }
-        if($usuario->foto === "") { //si no se indica foto se pone una x defecto
+        if ($usuario->foto === "") { //si no se indica foto se pone una x defecto
             $usuario->foto = "nofoto.png";
         }
 
-        
 
-        if($error) {
+
+        if ($error) {
             global $URL_PATH;
             //generamos un aleatorio para enviar el correo al usuario
             $fecha = idate("U"); //fecha en formato int
-            $aleatorio = rand(2,99);  //aleatorio entre 0 y 99
-            $validacion = $fecha*$aleatorio;
+            $aleatorio = rand(2, 99);  //aleatorio entre 0 y 99
+            $validacion = $fecha * $aleatorio;
 
-            $insert = (new Orm)->insertarUsuario($usuario,$validacion);
+            $insert = (new Orm)->insertarUsuario($usuario, $validacion);/* Esa variable tampoco hace nada */
             $emaildestino = "$usuario->email"; //falta cambiarlo por  $usuario->email
             $data = ["email" => $emaildestino];
-            include ('emailcfg/enviar-confirmacion.php');
+            include('emailcfg/enviar-confirmacion.php');
             echo Ti::render("view/registroCompleto.phtml", $data);
         }
     }
-    
-    public function cuentaActivada() 
+
+    public function cuentaActivada()
     {
-       echo Ti::render("view/cuentaActivada.phtml"); 
+        echo Ti::render("view/cuentaActivada.phtml");
     }
-    
-    
+
+
     /* *********** */
+
+    /* Contraseña olvidada */
+    public function passOlvidada()
+    {
+        echo Ti::render("view/passOlvidada.phtml");
+    }
+
+
+
+
+
+
+
+
 
     /* Hacemos pasarela de pago */
     public function procesarCompra()
@@ -199,15 +214,16 @@ class UserController extends Controller
             /* PRUEBA HECHIZOS UPDATE*/
             $idrango = (new Orm)->hechizosrango($cod_pedido);
             $hechizosUsuario = (new Orm)->hechizosusuario($idrango["Hechizos"], $_SESSION["login"]);
-        } 
+        }
         //enviamos la id para una vez realizada toda la transaccion se borre los datos de la BD
-         echo Ti::render("view/pedido.phtml", compact("sacarDatosPedido", "id")); 
+        echo Ti::render("view/pedido.phtml", compact("sacarDatosPedido", "id"));
     }
 
     /* eliminar datos */
-     public function eliminarDatos($cod_pedido){
+    public function eliminarDatos($cod_pedido)
+    {
         global $URL_PATH;
         (new Orm)->eliminarDatosUsuarioCompra($cod_pedido);
         header("Location: $URL_PATH/listado");
-     } 
+    }
 }

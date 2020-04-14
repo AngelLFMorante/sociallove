@@ -1,0 +1,90 @@
+<?php
+// necesitamos la trayectoria de la URL para formar las rutas:
+global $URL_PATH;
+global $login_url;
+\dawfony\Ti::extend("view/headerView.phtml");
+\dawfony\Ti::endExtend();
+?>
+<?php
+if (!empty($_POST)) {
+    $name = $_POST['name'];
+    $password = $_POST['password'];
+    $captcha = $_POST['g-recaptcha-response'];
+
+    $secret = '6LdAh-kUAAAAAAMDdm1Lw-qYSF7OT2NXRXmi8sxQ';
+
+    if (!$captcha) {
+        echo "Por favor verifica el captcha";
+    }
+    /* devuelve json */
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha");
+
+    var_dump($response);
+    /* para ver lo que nos da el response */
+    $arr = json_decode($response, TRUE);
+
+    /* validamos con if */
+    if ($arr['success']) {
+        echo '<h3>Todo correcto</h3>';
+    } else {
+        echo '<h3>Error al comprobar captcha</h3>';
+    }
+}
+?>
+
+<body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
+    background-repeat: repeat;
+    background-color: #fbf6f9;">
+
+    <div class="jumbotron">
+        <header>
+            <div class="img-container img-logo-vip">
+                <img class="img-fluid img-logo " src="<?= $URL_PATH ?>/assets/fotosInterfaces/logo.png" data-srcpng="" alt="socialLoveLogo">
+                <h1 class="img-logo logo-h1 ">SOCIAL LOVE</h1>
+            </div>
+        </header>
+    </div>
+
+    <div class="container passforget-principal" id="">
+
+        <div class="passforget col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <div class="panel-info-pass">
+                <div class="panel-head">
+                    <div class="panel-title">Recuperar Password</div>
+                    <div class="inicio-pass"><a href="<?= $URL_PATH ?>">Iniciar Sesi&oacute;n</a></div>
+                </div>
+
+                <div style="padding-top:30px" class="panel-body">
+
+                    <form class="form-pass" action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" autocomplete="off">
+
+                        <div style="margin-bottom: 20px" >
+                                <b>INTRODUCE TU EMAIL:</b>
+                                <input id="email" type="email" class="form-control mail-pass" name="email" placeholder="ejemplo@gmail.com" required>
+                        </div>
+                        <div style="margin-left:20px;" class="g-recaptcha" data-sitekey="6LdAh-kUAAAAADqYGx69EMC6lMotjcKGVuatjmj6"></div>
+
+                        <div style="margin-bottom:20px; margin-left:30%;" class="col-sm-5 controls">
+                            <button type="submit" class="btn btn-primary  boton-confirm-tarjet pedido-btn btn-large">Enviar</button>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-12 control">
+                                <div class="end-pass">
+                                    No tiene una cuenta! <a href="<?= $URL_PATH ?>/registro">Registrate aquí</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <?php \dawfony\Ti::extend("view/footerView.phtml"); ?>
+    <?php \dawfony\Ti::endExtend(); ?>
+</body>
+
+</html>

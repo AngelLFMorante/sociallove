@@ -54,6 +54,10 @@ Macaw::get($URL_PATH . '/activada', "controller\UserController@cuentaActivada");
 
 /* ******************************** */
 
+/* Password Olvidada */
+
+Macaw::get($URL_PATH . '/passOlvidada', "controller\UserController@passOlvidada");
+Macaw::get($URL_PATH . '/restablecerPass', "controller\UserController@restablecePass");
 
 
 /* ******** */

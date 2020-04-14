@@ -24,6 +24,7 @@ global $login_url;
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
     <?php /* Bootstrap. Las rutas deben ser absolutas, porque estamos haciendo rewrite */ ?>
     <link rel="stylesheet" href="<?= $URL_PATH ?>/vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= $URL_PATH ?>/node_modules/dist/css/bootstrap.css">
     <script src="<?= $URL_PATH ?>/vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="<?= $URL_PATH ?>/node_modules/bootstrap-social/bootstrap-social.css">
     <?php /* Font awesome CDN */ ?>
@@ -35,6 +36,8 @@ global $login_url;
     <?php /*Para añadir lineas al head desde las plantillas derivadas*/ ?>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <!-- CAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <!-- CSS PROPIO -->
     <link rel="stylesheet" type='text/css' href="<?= $URL_PATH ?>/css/cssMainView.css">
     <link rel="stylesheet" type='text/css' href="<?= $URL_PATH ?>/css/cssRegistroView.css">
