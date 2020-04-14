@@ -13,7 +13,7 @@ global $URL_PATH;
 
     <div class="container">
         <!-- ruta para conseguir mas hechizos al clikeo manda a otra pagina para ingresar email nuevo. -->
-        <a href="<?= $URL_PATH ?>/Hechizos/<?= $_SESSION["login"] ?>">
+        <a href="<?= $URL_PATH ?>/hechizos/<?= $_SESSION["login"] ?>">
             <div class="imagen-fondo-sesion">
                 <!-- Redireccionar para meter emails y consiga 10 hechizos -->
             </div>
@@ -23,12 +23,12 @@ global $URL_PATH;
                 <!-- ********************** Fotos de personas (chicas) imaginarias para hacer al usuario que se registre ******************************************* -->
                 <?php foreach ($sacarLista as $sacarListaSesion) :  ?>
                     <div class="container-images-sesion container-fluid">
-                        <img class="imagenes-genero-sesion" src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $sacarListaSesion["genero"] ?>s/<?= $sacarListaSesion["fotos"] ?>" alt="Busco_Genero">
+                        <img class="imagenes-genero-sesion" src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $sacarListaSesion->genero?>s/<?= $sacarListaSesion->foto ?>" alt="no_foto">
                         <!-- crear ruta para que nos lleve al perfil del usuario clickeado con su login-->
-                        <a href="<?= $URL_PATH ?>/perfilUsuario/<?= $sacarListaSesion['login'] ?>">
+                        <a href="<?= $URL_PATH ?>/perfilUsuario/<?= $sacarListaSesion->login ?>">
                             <div class="middle">
                                 <div class="text style-font">
-                                    <b><?= $sacarListaSesion["login"] ?></b><br><?= $sacarListaSesion["edad"] ?> años<br> <?= $sacarListaSesion["ubicacion"] ?>
+                                    <b><?= $sacarListaSesion->login ?></b><br><?= $sacarListaSesion->edad ?> años<br> <?= $sacarListaSesion->ubicacion ?>
                                 </div>
                             </div>
                         </a>
@@ -43,15 +43,14 @@ global $URL_PATH;
                     <a class="page-link" href="<?= $ruta . ($pagina - 1) ?>" tabindex="-1" aria-disabled="true">Anterior</a>
                 </li>
                 <?php
-                for ($i = 1; $i <= $numpaginas; $i++) {
-                ?>
+                for ($i = 1; $i <= $numpaginas; $i++):?>
 
                     <li class="page-item ">
                         <a class="page-link" href="<?= $ruta ?><?= $i ?>"><?= $i ?></a>
                     </li>
 
                 <?php
-                }
+                    endfor;
                 ?>
                 <li class="page-item <?= ($pagina + 1 > $numpaginas ? "disabled" : "") ?>">
                     <a class="page-link" href="<?= $ruta . ($pagina + 1) ?>" aria-disabled="true">Siguiente</a>

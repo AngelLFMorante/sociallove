@@ -512,5 +512,11 @@ h6{
     position: relative;
     margin-top: 25%;
 }
-
-
+.page-link{
+    background-color:#FF69B4;
+    color:white;
+}
+.page-link:hover{
+    background-color:pink;
+    color:black;
+}

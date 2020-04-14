@@ -11,7 +11,7 @@ function validarformulariozonavip() {
         let validFecha = true;
         let validCvv = true;
         let todoOk = true;
-        if(!fecha.match(/^([0-9]{2})(\/)([0-9]{2})/ )){
+        if(!fecha.match(/^(0[123456789]|10|11|12)(\/)([2][1-9])/ )){
             validFecha = false;
         }
         if(!cvv.match(/^[0-9]{3}/)){
