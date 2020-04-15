@@ -2,36 +2,9 @@
 // necesitamos la trayectoria de la URL para formar las rutas:
 global $URL_PATH;
 global $login_url;
-\dawfony\Ti::extend("view/headerView.phtml");
+\dawfony\Ti::extend("view/cabeceras/headerView.phtml");
 \dawfony\Ti::endExtend();
 ?>
-<?php
-if (!empty($_POST)) {
-    $name = $_POST['name'];
-    $password = $_POST['password'];
-    $captcha = $_POST['g-recaptcha-response'];
-
-    $secret = '6LdAh-kUAAAAAAMDdm1Lw-qYSF7OT2NXRXmi8sxQ';
-
-    if (!$captcha) {
-        echo "Por favor verifica el captcha";
-    }
-    /* devuelve json */
-    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha");
-
-    var_dump($response);
-    /* para ver lo que nos da el response */
-    $arr = json_decode($response, TRUE);
-
-    /* validamos con if */
-    if ($arr['success']) {
-        echo '<h3>Todo correcto</h3>';
-    } else {
-        echo '<h3>Error al comprobar captcha</h3>';
-    }
-}
-?>
-
 <body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
     background-repeat: repeat;
     background-color: #fbf6f9;">
@@ -56,13 +29,13 @@ if (!empty($_POST)) {
 
                 <div style="padding-top:30px" class="panel-body">
 
-                    <form class="form-pass" action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" autocomplete="off">
+                    <form class="form-pass" action="<?= $URL_PATH ?>/restablecerPass" onsubmit="return passOlvidada()" method="POST" autocomplete="off">
 
                         <div style="margin-bottom: 20px" >
                                 <b>INTRODUCE TU EMAIL:</b>
                                 <input id="email" type="email" class="form-control mail-pass" name="email" placeholder="ejemplo@gmail.com" required>
                         </div>
-                        <div style="margin-left:20px;" class="g-recaptcha" data-sitekey="6LdAh-kUAAAAADqYGx69EMC6lMotjcKGVuatjmj6"></div>
+                        <div style="margin-left:15%;" id="captcha" class="g-recaptcha" data-sitekey="6LdAh-kUAAAAADqYGx69EMC6lMotjcKGVuatjmj6"></div>
 
                         <div style="margin-bottom:20px; margin-left:30%;" class="col-sm-5 controls">
                             <button type="submit" class="btn btn-primary  boton-confirm-tarjet pedido-btn btn-large">Enviar</button>
@@ -71,7 +44,7 @@ if (!empty($_POST)) {
                         <div class="form-group">
                             <div class="col-md-12 control">
                                 <div class="end-pass">
-                                    No tiene una cuenta! <a href="<?= $URL_PATH ?>/registro">Registrate aquí</a>
+                                    No tienes una cuenta! <a href="<?= $URL_PATH ?>/registro">Registrate aqu&iacute;</a>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +56,7 @@ if (!empty($_POST)) {
     </div>
 
 
-    <?php \dawfony\Ti::extend("view/footerView.phtml"); ?>
+    <?php \dawfony\Ti::extend("view/cabeceras/footerView.phtml"); ?>
     <?php \dawfony\Ti::endExtend(); ?>
 </body>
 

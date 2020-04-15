@@ -48,22 +48,25 @@ class Orm
         return $bd->queryOne($sql, [$usuario->email]);
     }
     /* Sacamos toda la información importante para ver en el listado del usuario al hacer login */
-    function listadoSesionIni($pagina = 1,$login)
+    function listadoSesionIni($pagina = 1, $login)
     {
         global $config;
         $limite = $config["post_per_page"];
-        $offset = ($pagina -1) * $limite;
+        $offset = ($pagina - 1) * $limite;
         return  Klasto::getInstance()->query(
             "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like(SELECT busco from usuario where login=?) EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?)  LIMIT $limite OFFSET $offset",
-            [$login,$login],"model\Usuario"
+            [$login, $login],
+            "model\Usuario"
         );
     }
 
     /* sacamos un count de todas las personas segun busqueda de género para sacar a todas esas personas que se registren de nuevo y aumente la base de datos */
-    function contadorPersonas($login){
+    function contadorPersonas($login)
+    {
         return Klasto::getInstance()->queryOne(
             "SELECT count(genero) as cantidadPersonas FROM usuario WHERE genero like (SELECT busco from usuario where login=?)  ",
-        [$login],"model\Usuario"
+            [$login],
+            "model\Usuario"
         );
     }
 
@@ -208,5 +211,15 @@ class Orm
             "DELETE FROM `pedido` WHERE id=?",
             [$idPedido]
         );
+    }
+
+
+    public function cambioPassword($newPass, $email)
+    {
+        return Klasto::getInstance()->execute(
+            "UPDATE `usuario` SET `password`=? WHERE email = ?",
+            [$newPass, $email]
+        );
+        
     }
 }

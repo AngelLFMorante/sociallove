@@ -57,7 +57,7 @@ class UserController extends Controller
         $edad_diff = date_diff(date_create($fecha_nacimiento), date_create($dia_actual));
         $edad = intval($edad_diff->format('%y')); //convertimos a int
         $data = ["sex" => $sex, "nombre" => $nombre, "email" => $email, "prepassword" => $prepassword, "edad" => $edad];
-        echo Ti::render("view/registroForm.phtml", $data);
+        echo Ti::render("view/registro/registroForm.phtml", $data);
     }
 
     public function procesarRegistro()
@@ -154,31 +154,17 @@ class UserController extends Controller
             $emaildestino = "$usuario->email"; //falta cambiarlo por  $usuario->email
             $data = ["email" => $emaildestino];
             include('emailcfg/enviar-confirmacion.php');
-            echo Ti::render("view/registroCompleto.phtml", $data);
+            echo Ti::render("view/registro/registroCompleto.phtml", $data);
         }
     }
 
     public function cuentaActivada()
     {
-        echo Ti::render("view/cuentaActivada.phtml");
+        echo Ti::render("view/registro/cuentaActivada.phtml");
     }
 
 
     /* *********** */
-
-    /* Contraseña olvidada */
-    public function passOlvidada()
-    {
-        echo Ti::render("view/passOlvidada.phtml");
-    }
-
-
-
-
-
-
-
-
 
     /* Hacemos pasarela de pago */
     public function procesarCompra()
@@ -216,7 +202,7 @@ class UserController extends Controller
             $hechizosUsuario = (new Orm)->hechizosusuario($idrango["Hechizos"], $_SESSION["login"]);
         }
         //enviamos la id para una vez realizada toda la transaccion se borre los datos de la BD
-        echo Ti::render("view/pedido.phtml", compact("sacarDatosPedido", "id"));
+        echo Ti::render("view/vip/pedido.phtml", compact("sacarDatosPedido", "id"));
     }
 
     /* eliminar datos */
@@ -226,4 +212,34 @@ class UserController extends Controller
         (new Orm)->eliminarDatosUsuarioCompra($cod_pedido);
         header("Location: $URL_PATH/listado");
     }
+
+
+    
+    /* ANGEL PASSWORD FORGET */
+    /* Contraseña olvidada */
+    public function passOlvidada()
+    {
+        echo Ti::render("view/passForget/passOlvidada.phtml");
+    }
+    public function restablecePass(){
+        /* AQUI IRIA TODO EL TEMA DEL ENVIO DEL EMAIL,SI FUNCIONA EL CAPTCHA Y EL EMAIL LO HA PUESTO.
+        SOLO NOS PERMITE AVANZAR AL CAMBIO DE CONTRASEÑA SI HA VERIFICADO,SINO NO.
+        SI NO VERIFICA SE VUELVE AL INICIO*/
+        /* AQUÍ SOLO ES PRUEBA PARA HACER LOS FORMS CORRESPONDIENTES A LA HORA DE TODO TRUE */
+        echo Ti::render("view/passForget/restablecerPass.phtml");
+    }
+    /* aquí restablecemos la contraseña */
+    public function cambioPass(){
+        /* Tenemos que tener el email en todo momento para poder hacer el cambio
+        Yo lo dejo casi hecho pero no sé como lo recogerías, asi que te dejo una variable, pero yo para hacer
+        la comprobación la meto a pincho, para saber si funciona todo correcto.
+        De ser así solo tienes que poner el email. */
+        $email = "alba@gmail.com";/* Lo pongo a pincho pero aquí si ya está verificado, el email tendría que recogerse aquí */
+        $newPass = $_REQUEST["password"];
+        $newPassHash = password_hash($newPass, PASSWORD_DEFAULT);
+        (new Orm)->cambioPassword($newPassHash,$email);
+        echo Ti::render("view/passForget/passCambiada.phtml");
+    }
+
+/* ***** */
 }

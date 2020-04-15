@@ -528,7 +528,7 @@ h6{
     height: 500px;
 }
 .passforget{
-    padding:10%; 
+    padding:5%; 
     margin-left: 10%;
     position: relative;
     
@@ -545,7 +545,8 @@ h6{
     text-align: center;
 }
 .inicio-pass{
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: 'Special Elite', cursive;
+    color:black;
     float:right; 
     font-size: 80%; 
     position: relative; 
@@ -560,11 +561,15 @@ h6{
 .form-pass{
     position: relative;
     margin-right: 25%;
+    -webkit-box-shadow: 32px 29px 17px -1px rgba(0,0,0,0.58);
+    -moz-box-shadow: 32px 29px 17px -1px rgba(0,0,0,0.58);
+    box-shadow: 32px 29px 17px -1px rgba(0,0,0,0.58);
 }
 .mail-pass{
     border-radius: 10px;
 }
 .end-pass{
+    font-family: 'Special Elite', cursive;
     border-top: 1px solid#888; 
     padding-top:15px; 
     font-size:85%

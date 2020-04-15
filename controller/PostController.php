@@ -74,12 +74,12 @@ class PostController extends Controller
     function busquedaUsuario(){
         
         $usuario = $_REQUEST["busquedaUsuario"];
-        echo Ti::render("view/busquedaUsuario.phtml", compact("usuario"));
+        echo Ti::render("view/usuarios/busquedaUsuario.phtml", compact("usuario"));
     }
 
     //Entramos en la zonaVip
     function vip(){
-        echo Ti::render("view/zonaVip.phtml");
+        echo Ti::render("view/vip/zonaVip.phtml");
     }
 
 

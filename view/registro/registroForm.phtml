@@ -3,7 +3,7 @@
 use \dawfony\Ti;
 global $URL_PATH;
 global $login_url;
-\dawfony\Ti::extend("view/headerView.phtml"); 
+\dawfony\Ti::extend("view/cabeceras/headerView.phtml"); 
 \dawfony\Ti::endExtend(); 
 ?>
 <!-- ESTOS JS SOLO SE CARGAN AQUI, NO CAMBIARLOS DE SITIO, PARA EVITAR CONFLICTOS -->
@@ -224,7 +224,7 @@ global $login_url;
 
 
     <div class="divFooterAlFinal">
-        <?php Ti::extend("view/footerView.phtml"); ?>
+        <?php Ti::extend("view/cabeceras/footerView.phtml"); ?>
         <?php Ti::endExtend(); ?>
 
     </div>
