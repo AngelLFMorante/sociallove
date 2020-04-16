@@ -2,8 +2,10 @@
 // necesitamos la trayectoria de la URL para formar las rutas:
 global $URL_PATH;
 global $login_url;
+
 \dawfony\Ti::extend("view/cabeceras/headerView.phtml");
 \dawfony\Ti::endExtend();
+
 ?>
 
 <body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
@@ -118,10 +120,10 @@ global $login_url;
                             <form class="form-inline" action="<?= $URL_PATH ?>/login" method="post">
                                 <div class="form-group">
                                     <div class="form-group  mb-2">
-                                        <input class="form-control form-control-sm" type="text" onchange="comprobarlogin()" id="mail" name="email" placeholder="correo electrónico" value="" required>
+                                        <input class="form-control form-control-sm" type="text" onchange="comprobarlogin()" id="mail" name="email" placeholder="correo electrónico" value="<?php if(isset($_COOKIE["usuario"])): ?><?=$_COOKIE["usuario"];?> <?php endif ?>" required>
                                     </div>
                                     <div class="form-group mx-3 mb-2">
-                                        <input class="form-control form-control-sm" type="password" id="password" name="password" value="" placeholder="contraseña" required>
+                                        <input class="form-control form-control-sm" type="password" id="password" name="password" value="<?php if(isset($_COOKIE["usuario"])): ?><?=$_COOKIE["pass"]?><?php endif ?>" placeholder="contraseña" required>
                                     </div>
                                     <div class="btn1">
                                         <button type="submit" id="btn-entrada-ok" class="btn btn-primary mb-2">OK</button>
@@ -129,7 +131,7 @@ global $login_url;
                                 </div>
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox mb-2">
-                                        <input type="checkbox" class="custom-control-input" id="customCheck" name="example1">
+                                        <input type="checkbox" class="custom-control-input" id="customCheck" name="rememberme" <?php if(isset($_COOKIE["usuario"])): ?> checked <?php endif ?>>
                                         <label class="custom-control-label" for="customCheck"><span style="color:white">recordar mis datos</span></label>
                                     </div>
                                     <div class="form-group mx-5 ">

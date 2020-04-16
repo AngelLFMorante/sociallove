@@ -13,30 +13,49 @@ class UserController extends Controller
     public function procesarLogin()
     {
         global $URL_PATH;
+        global $pass;
 
         $usuario = new Usuario;
         $email = $_REQUEST["email"];
         $usuario->email = $email;
-        $usuario->password = $_REQUEST["password"];
+        $usuario->password = trim($_REQUEST["password"]);
+        $checkbox = $_POST["rememberme"] ?? "";
         $hashpass = (new Orm)->comprobarUsuario($usuario);
         if (!password_verify($usuario->password, $hashpass["password"])) {
             $sacarListaMenu = (new PostController)->listaMain();
             $error_msg = "*Login o contraseña incorrecto";
             echo Ti::render("view/principal.phtml", compact("error_msg", "sacarListaMenu"));
         } else {
-
-            session_start();
-            $_SESSION['login'] = $hashpass["login"];
-            $_SESSION['rol_id'] = $hashpass["rol"];
-            $_SESSION['fotoPerfil'] = $hashpass["foto"];
-            $_SESSION['genero'] = $hashpass["genero"];
-            header("Location: $URL_PATH/listado");
+            if ($checkbox == 'on') {
+                setcookie("usuario", trim($email), time() + (60 * 60));
+                setcookie("pass", trim($usuario->password), time() + (60 * 60)); //solo es una hora
+                /* DEJO COMENTADO QUE NO ENCUENTRO LA MANERA DE MANDAR EL PASSWORD CIFRADO
+                Y EN EL INPUT ME PONGA EL PASS ORIGINAL,POR QUE SI LO PONGO EN SESION, LUEGO AL DESCONECTAR SE BORRA.
+                HE INTENTADO PONER EL HASH PERO NO COINCIDEN,HE INTENTADO DESCIFRADO CON MD5 Y SHA1,TAMPOCO.
+                NO LLEVA MI NIVEL  HACER TANTO. */
+                session_start();
+                $_SESSION['login'] = $hashpass["login"];
+                $_SESSION['rol_id'] = $hashpass["rol"];
+                $_SESSION['fotoPerfil'] = $hashpass["foto"];
+                $_SESSION['genero'] = $hashpass["genero"];
+                header("Location: $URL_PATH/listado");
+            } else {
+                setcookie("usuario", "", time() - (60 * 60));
+                setcookie("pass", "", time() - (60 * 60));
+                session_start();
+                $_SESSION['login'] = $hashpass["login"];
+                $_SESSION['rol_id'] = $hashpass["rol"];
+                $_SESSION['fotoPerfil'] = $hashpass["foto"];
+                $_SESSION['genero'] = $hashpass["genero"];
+                header("Location: $URL_PATH/listado");
+            }
         }
     }
 
     public function hacerLogout()
     {
         global $URL_PATH;
+        session_unset();
         session_destroy();
         header("Location: $URL_PATH/");
     }
@@ -214,14 +233,15 @@ class UserController extends Controller
     }
 
 
-    
+
     /* ANGEL PASSWORD FORGET */
     /* Contraseña olvidada */
     public function passOlvidada()
     {
         echo Ti::render("view/passForget/passOlvidada.phtml");
     }
-    public function restablecePass(){
+    public function restablecePass()
+    {
         /* AQUI IRIA TODO EL TEMA DEL ENVIO DEL EMAIL,SI FUNCIONA EL CAPTCHA Y EL EMAIL LO HA PUESTO.
         SOLO NOS PERMITE AVANZAR AL CAMBIO DE CONTRASEÑA SI HA VERIFICADO,SINO NO.
         SI NO VERIFICA SE VUELVE AL INICIO*/
@@ -229,7 +249,8 @@ class UserController extends Controller
         echo Ti::render("view/passForget/restablecerPass.phtml");
     }
     /* aquí restablecemos la contraseña */
-    public function cambioPass(){
+    public function cambioPass()
+    {
         /* Tenemos que tener el email en todo momento para poder hacer el cambio
         Yo lo dejo casi hecho pero no sé como lo recogerías, asi que te dejo una variable, pero yo para hacer
         la comprobación la meto a pincho, para saber si funciona todo correcto.
@@ -237,9 +258,9 @@ class UserController extends Controller
         $email = "alba@gmail.com";/* Lo pongo a pincho pero aquí si ya está verificado, el email tendría que recogerse aquí */
         $newPass = $_REQUEST["password"];
         $newPassHash = password_hash($newPass, PASSWORD_DEFAULT);
-        (new Orm)->cambioPassword($newPassHash,$email);
+        (new Orm)->cambioPassword($newPassHash, $email);
         echo Ti::render("view/passForget/passCambiada.phtml");
     }
 
-/* ***** */
+    /* ***** */
 }
