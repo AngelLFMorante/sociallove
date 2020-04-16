@@ -11,9 +11,14 @@ class PostController extends Controller
 
         global $config;
         global $URL_PATH;
-        $sacarListaMenu = (new PostController)->listaMain();
+        if(isset($_SESSION["login"])){
+            header("Location: $URL_PATH/listado");
+        }else{
+            $sacarListaMenu = (new PostController)->listaMain();
         /*********Números aleatorios para tener una lista en main view aleatoria cada ez que entres, para hacerla mas real********/
         echo Ti::render("view/principal.phtml", compact('sacarListaMenu'));
+        }
+        
     }
     
     //sacamos datos del listado del main.(Una función para mantener datos al hacer login erroneo).
@@ -71,10 +76,23 @@ class PostController extends Controller
     }
 
     //busqueda de usuario FALTA PONER TODO EL ORM Y EL LISTADO.ESTO ES UNA PRUEBA DE RECOGIDA PARÁMETROS.
-    function busquedaUsuario(){
-        
-        $usuario = $_REQUEST["busquedaUsuario"];
-        echo Ti::render("view/usuarios/busquedaUsuario.phtml", compact("usuario"));
+    function busquedaUsuario($pagina = 1){
+        global $config;
+        global $URL_PATH;
+        $busqueda = $_REQUEST["busquedaUsuario"];
+        $login = $_SESSION["login"];
+        $genero = (new Orm)->busquedaGenero($login);
+        $sacarLista = (new Orm)->busquedaUsuario($pagina,$busqueda,$login,$genero->busco);
+        /* Pongo búsqueda porque es algo mas generalizado ya que buscamos por varias partes:
+        1-nombre
+        2-ciudad
+        3-gustos
+        4-aficiones */
+        $cuenta = (new Orm)->contarPersonasBusqueda($genero->busco,$busqueda);/* sacamos el total de las personas que coincidan con esa busqueda */
+        $numpaginas = ceil ($cuenta->personas / $config["post_per_page"]);
+        $ruta = "$URL_PATH/busqueda/page/";
+
+        echo Ti::render("view/usuarios/busquedaUsuario.phtml", compact("sacarLista","cuenta", "numpaginas", "pagina", "ruta"));
     }
 
     //Entramos en la zonaVip
