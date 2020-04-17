@@ -229,7 +229,6 @@ class Orm
             [$login],"model\Usuario"
         );
     }
-    /* Aqui hay un fallo que no se porque pero si ponoes nombre de chicas aparecen. De momento solo ocurre con Nombre */
     public function busquedaUsuario($pagina = 1,$busqueda,$login,$genero){
         global $config;
         $limite = $config["post_per_page"];
@@ -239,11 +238,11 @@ class Orm
             [$genero,$genero,$genero,$genero,$login],"model\Usuario"
             );
     }
-
     public function contarPersonasBusqueda($genero,$busqueda){
         return Klasto::getInstance()->queryOne(
             "SELECT COUNT(genero) as personas FROM usuario where  ubicacion LIKE '%$busqueda%' and genero = ? or nombre LIKE '%$busqueda%' and genero = ? or gustos LIKE '%$busqueda%' and genero = ? or aficiones LIKE '%$busqueda%' and genero = ?",
             [$genero,$genero,$genero,$genero,],"model\Usuario"
         );
     }
+    
 }

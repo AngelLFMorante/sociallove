@@ -46,9 +46,11 @@ global $URL_PATH;
                 <li class="page-item <?= ($pagina + 1 > $numpaginas ? "disabled" : "") ?>">
                     <a class="page-link" href="<?= $ruta . ($pagina + 1) ?>" aria-disabled="true">Siguiente</a>
                 </li>
+                <li  class="page-item">
+                <a class="page-link" href="<?= $URL_PATH ?>/" class="btn btn-primary  boton-confirm-tarjet pedido-btn" >VOLVER</a>
+                </li>
             </ul>
         </nav>
-        <a href="<?= $URL_PATH ?>/" class="btn btn-primary  boton-confirm-tarjet pedido-btn" >VOLVER</a>
     </div>
 
 <?php Ti::endBlock(); ?>
