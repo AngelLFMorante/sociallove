@@ -82,17 +82,19 @@ class PostController extends Controller
         $busqueda = $_REQUEST["busquedaUsuario"];
         $login = $_SESSION["login"];
         $genero = (new Orm)->busquedaGenero($login);
-        $sacarLista = (new Orm)->busquedaUsuario($pagina,$busqueda,$login,$genero->busco);
+        $busco = $genero->busco;
+        $sacarLista = (new Orm)->busquedaUsuario($pagina,$busqueda,$login,$busco);
         /* Pongo búsqueda porque es algo mas generalizado ya que buscamos por varias partes:
         1-nombre
         2-ciudad
         3-gustos
         4-aficiones */
-        $cuenta = (new Orm)->contarPersonasBusqueda($genero->busco,$busqueda);/* sacamos el total de las personas que coincidan con esa busqueda */
+        $cuenta = (new Orm)->contarPersonasBusqueda($busco,$busqueda);/* sacamos el total de las personas que coincidan con esa busqueda */
         $numpaginas = ceil ($cuenta->personas / $config["post_per_page"]);
         $ruta = "$URL_PATH/busqueda/page/";
+        $hechizos = (new Orm)->contadorHechizos($login);
 
-        echo Ti::render("view/usuarios/busquedaUsuario.phtml", compact("sacarLista","cuenta", "numpaginas", "pagina", "ruta"));
+        echo Ti::render("view/usuarios/busquedaUsuario.phtml", compact("sacarLista", "busco", "hechizos","cuenta", "numpaginas", "pagina", "ruta"));
     }
 
     //Entramos en la zonaVip

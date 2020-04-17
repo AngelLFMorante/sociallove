@@ -229,13 +229,14 @@ class Orm
             [$login],"model\Usuario"
         );
     }
+    /* Aqui hay un fallo que no se porque pero si ponoes nombre de chicas aparecen. De momento solo ocurre con Nombre */
     public function busquedaUsuario($pagina = 1,$busqueda,$login,$genero){
         global $config;
         $limite = $config["post_per_page"];
         $offset = ($pagina - 1) * $limite;
             return Klasto::getInstance()->query(
-                "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like '%$genero%' and  ubicacion LIKE '%$busqueda%' or nombre LIKE '%$busqueda%' or gustos LIKE '%$busqueda%' or aficciones LIKE '%$busqueda%' EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?) LIMIT $limite OFFSET $offset",
-            [$login],"model\Usuario"
+                "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where  ubicacion LIKE '%$busqueda%' or nombre LIKE '%$busqueda%' or gustos LIKE '%$busqueda%' or aficciones LIKE '%$busqueda%' and genero = ?  EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?) LIMIT $limite OFFSET $offset",
+            [$genero,$login],"model\Usuario"
             );
     }
     public function contarPersonasBusqueda($genero,$busqueda){
