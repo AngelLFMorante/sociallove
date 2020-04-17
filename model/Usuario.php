@@ -16,7 +16,7 @@ class Usuario{
     public $sobreti;
     public $gustos;
     public $loquebuscas;
-    public $aficciones;
+    public $aficiones;
     public $apellidos;
     public $hechizos;
 }

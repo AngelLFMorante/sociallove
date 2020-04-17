@@ -79,16 +79,18 @@ class PostController extends Controller
     function busquedaUsuario($pagina = 1){
         global $config;
         global $URL_PATH;
-        $busqueda = $_REQUEST["busquedaUsuario"];
+        $busqueda = $_REQUEST["busquedaUsuario"] ?? "";
         $login = $_SESSION["login"];
         $genero = (new Orm)->busquedaGenero($login);
         $busco = $genero->busco;
-        $sacarLista = (new Orm)->busquedaUsuario($pagina,$busqueda,$login,$busco);
         /* Pongo búsqueda porque es algo mas generalizado ya que buscamos por varias partes:
         1-nombre
         2-ciudad
         3-gustos
         4-aficiones */
+        $sacarLista = (new Orm)->busquedaUsuario($pagina,$busqueda,$login,$busco);
+        /* ******** */
+    
         $cuenta = (new Orm)->contarPersonasBusqueda($busco,$busqueda);/* sacamos el total de las personas que coincidan con esa busqueda */
         $numpaginas = ceil ($cuenta->personas / $config["post_per_page"]);
         $ruta = "$URL_PATH/busqueda/page/";

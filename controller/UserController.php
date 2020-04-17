@@ -120,12 +120,12 @@ class UserController extends Controller
         $usuario->rango_id = "0";
         $usuario->hechizos = "3";
 
-        /*CHECKBOX AFICCIONES*/
-        if (is_array($_POST['aficciones'] ?? "")) {
+        /*CHECKBOX AFICIONES*/
+        if (is_array($_POST['aficiones'] ?? "")) {
             $selectedaf = '';
-            $num_af = count($_POST['aficciones']);
+            $num_af = count($_POST['aficiones']);
             $currentaf = 0;
-            foreach ($_POST['aficciones'] as $key => $v) {
+            foreach ($_POST['aficiones'] as $key => $v) {
                 if ($currentaf != $num_af - 1)
                     $selectedaf .= $v . ', ';
                 else
@@ -136,7 +136,7 @@ class UserController extends Controller
             $selectedaf = "";
         }
         //echo '<div>Has seleccionado: '.$selected.'</div>'; //los que ha seleccionado
-        $usuario->aficciones = $selectedaf;
+        $usuario->aficiones = $selectedaf;
         $usuario->busco = $_REQUEST["busco"];
         //foto del usuario
         $usuario->foto = $_FILES["foto"]["name"];

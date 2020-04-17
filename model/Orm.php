@@ -99,8 +99,8 @@ class Orm
     function insertarUsuario($usuario, $validacion)
     {
         $bd = Klasto::getInstance();
-        $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, sobreti, gustos, loquebuscas, aficciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto, $validacion, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficciones]);
+        $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, sobreti, gustos, loquebuscas, aficiones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto, $validacion, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficiones]);
     }
 
     /* ********* */
@@ -235,14 +235,15 @@ class Orm
         $limite = $config["post_per_page"];
         $offset = ($pagina - 1) * $limite;
             return Klasto::getInstance()->query(
-                "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where  ubicacion LIKE '%$busqueda%' or nombre LIKE '%$busqueda%' or gustos LIKE '%$busqueda%' or aficciones LIKE '%$busqueda%' and genero = ?  EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?) LIMIT $limite OFFSET $offset",
-            [$genero,$login],"model\Usuario"
+                "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where ubicacion LIKE '%$busqueda%' and genero = ? or nombre LIKE '%$busqueda%' and genero = ? or gustos LIKE '%$busqueda%' and genero = ? or aficiones LIKE '%$busqueda%' and genero = ? EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?)  LIMIT $limite OFFSET $offset",
+            [$genero,$genero,$genero,$genero,$login],"model\Usuario"
             );
     }
+
     public function contarPersonasBusqueda($genero,$busqueda){
         return Klasto::getInstance()->queryOne(
-            "SELECT COUNT(genero) as personas FROM usuario where genero like '%$genero%' and  ubicacion LIKE '%$busqueda%' or nombre LIKE '%$busqueda%' or gustos LIKE '%$busqueda%' or aficciones LIKE '%$busqueda%'",
-            [],"model\Usuario"
+            "SELECT COUNT(genero) as personas FROM usuario where  ubicacion LIKE '%$busqueda%' and genero = ? or nombre LIKE '%$busqueda%' and genero = ? or gustos LIKE '%$busqueda%' and genero = ? or aficiones LIKE '%$busqueda%' and genero = ?",
+            [$genero,$genero,$genero,$genero,],"model\Usuario"
         );
     }
 }
