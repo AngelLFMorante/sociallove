@@ -108,22 +108,22 @@ global $login_url;
 
                             <?php if ($error_msg) : ?>
                                 <script>
-                                Swal.fire({
-                                icon: 'error',
-                                type: 'info',
-                                title: 'Email o contraseña incorrecto.',
-                                timer: 3000,
-                                showConfirmButton: false
-                                });
-                            </script>
+                                    Swal.fire({
+                                        icon: 'error',
+                                        type: 'info',
+                                        title: 'Email o contraseña incorrecto.',
+                                        timer: 3000,
+                                        showConfirmButton: false
+                                    });
+                                </script>
                             <?php endif; ?>
                             <form class="form-inline" action="<?= $URL_PATH ?>/login" method="post">
                                 <div class="form-group">
                                     <div class="form-group  mb-2">
-                                        <input class="form-control form-control-sm" type="text" onchange="comprobarlogin()" id="mail" name="email" placeholder="correo electrónico" value="<?php if(isset($_COOKIE["usuario"])): ?><?=$_COOKIE["usuario"];?> <?php endif ?>" required>
+                                        <input class="form-control form-control-sm" type="text" onchange="comprobarlogin()" id="mail" name="email" placeholder="correo electrónico" value="<?php if (isset($_COOKIE["usuario"])) : ?><?= $_COOKIE["usuario"]; ?> <?php endif ?>" required>
                                     </div>
                                     <div class="form-group mx-3 mb-2">
-                                        <input class="form-control form-control-sm" type="password" id="password" name="password" value="<?php if(isset($_COOKIE["usuario"])): ?><?=$_COOKIE["pass"]?><?php endif ?>" placeholder="contraseña" required>
+                                        <input class="form-control form-control-sm" type="password" id="password" name="password" value="<?php if (isset($_COOKIE["usuario"])) : ?><?= $_COOKIE["pass"] ?><?php endif ?>" placeholder="contraseña" required>
                                     </div>
                                     <div class="btn1">
                                         <button type="submit" id="btn-entrada-ok" class="btn btn-primary mb-2">OK</button>
@@ -131,12 +131,12 @@ global $login_url;
                                 </div>
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox mb-2">
-                                        <input type="checkbox" class="custom-control-input" id="customCheck" name="rememberme" <?php if(isset($_COOKIE["usuario"])): ?> checked <?php endif ?>>
+                                        <input type="checkbox" class="custom-control-input" id="customCheck" name="rememberme" <?php if (isset($_COOKIE["usuario"])) : ?> checked <?php endif ?>>
                                         <label class="custom-control-label" for="customCheck"><span style="color:white">recordar mis datos</span></label>
                                     </div>
                                     <div class="form-group mx-5 ">
                                         <!-- Hacer la referencia por si ha olvidado la contraseña, mandar a una pagina y que saque su contraseña. -->
-                                        <a class="password-lost-link white open-modal" href="<?=$URL_PATH?>/passOlvidada">¿Has olvidado tu contraseña?</a>
+                                        <a class="password-lost-link white open-modal" href="<?= $URL_PATH ?>/passOlvidada">¿Has olvidado tu contraseña?</a>
                                     </div>
                                 </div>
 
@@ -180,7 +180,7 @@ global $login_url;
                         <p class="style-font">en menos de un minuto</p>
                         <div class="">
                             <div class="text-center">
-                                <a href="" class="btn btn-block mb-4 flickr" data-toggle="modal" data-target="#modalContactForm">
+                                <a href="" class="btn btn-block mb-4 btn-social style-font btn btn-block mb-4 btn-flickr" id="fbook" data-toggle="modal" data-target="#modalContactForm"><img class="img-logo-inscripcion" src="<?= $URL_PATH ?>/assets/fotosInterfaces/logoIns.png" alt="socialLoveLogo">
                                     ME INSCRIBO</a>
                             </div>
                             <a href="<?= $login_url ?>" class="btn btn-block mb-4 btn-social btn-facebook style-font" id="fbook">

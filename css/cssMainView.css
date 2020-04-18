@@ -574,3 +574,8 @@ h6{
     padding-top:15px; 
     font-size:85%
 }
+.img-logo-inscripcion{
+    margin-top:0px;
+    display: inline-block;
+    height: 60px;
+}
