@@ -119,7 +119,8 @@ class UserController extends Controller
         $usuario->rol_id = "1";
         $usuario->rango_id = "0";
         $usuario->hechizos = "3";
-
+        $usuario->activada = "0";
+       
         /*CHECKBOX AFICIONES*/
         if (is_array($_POST['aficiones'] ?? "")) {
             $selectedaf = '';
@@ -168,22 +169,44 @@ class UserController extends Controller
             $fecha = idate("U"); //fecha en formato int
             $aleatorio = rand(2, 99);  //aleatorio entre 0 y 99
             $validacion = $fecha * $aleatorio;
-
+            
             $insert = (new Orm)->insertarUsuario($usuario, $validacion);/* Esa variable tampoco hace nada */
             $emaildestino = "$usuario->email"; //falta cambiarlo por  $usuario->email
-            $data = ["email" => $emaildestino];
+            $data = ["email" => $emaildestino];            
+            $token = $validacion;
             include('emailcfg/enviar-confirmacion.php');
             echo Ti::render("view/registro/registroCompleto.phtml", $data);
         }
-    }
+    } 
 
-    public function cuentaActivada()
+    // activacion de la cuenta despues de registrar
+    public function cuentaActivada($accionUS, $validar)
     {
-        echo Ti::render("view/registro/cuentaActivada.phtml");
+        global $URL_PATH;
+
+        if ($accionUS == 0) {
+            $selectActivada = (new Orm)->dimeSiCuentaActivada($validar);
+            if ($selectActivada === 0) {
+                //modificar 0 por 1
+                (new Orm)->poner1Activada($validar);
+                echo Ti::render("view/registro/cuentaActivada.phtml");
+            } else {
+                header("Location: $URL_PATH/");
+            }
+        }
+
+        header("Location: $URL_PATH/");
+    }
+
+    public function dameUnAleatorio()
+    {
+        //generamos un aleatorio para enviar el correo al usuario
+        $fechaInt = idate("U"); //fecha en formato int
+        $unAleatorio = rand(2, 99);  //aleatorio entre 0 y 99
+        return $fechaInt * $unAleatorio;
     }
 
 
-    /* *********** */
 
     /* Hacemos pasarela de pago */
     public function procesarCompra()
@@ -240,27 +263,52 @@ class UserController extends Controller
     {
         echo Ti::render("view/passForget/passOlvidada.phtml");
     }
+    /* obtenemos token con el email */
     public function restablecePass()
     {
-        /* AQUI IRIA TODO EL TEMA DEL ENVIO DEL EMAIL,SI FUNCIONA EL CAPTCHA Y EL EMAIL LO HA PUESTO.
-        SOLO NOS PERMITE AVANZAR AL CAMBIO DE CONTRASEÑA SI HA VERIFICADO,SINO NO.
-        SI NO VERIFICA SE VUELVE AL INICIO*/
-        /* AQUÍ SOLO ES PRUEBA PARA HACER LOS FORMS CORRESPONDIENTES A LA HORA DE TODO TRUE */
-        echo Ti::render("view/passForget/restablecerPass.phtml");
+        /* ENVIO DEL EMAIL */
+        $email = $_REQUEST["email"] ?? "";
+        if ($email != "") { //mail correcto pedimos token y mandamos email
+            //obtengo el token con el mail, para insertarlo en el email
+            $token = (new Orm)->obtenerNumValidacion($email);
+            $emaildestino = $email;
+            include('emailcfg/enviar-recuPass.php');
+            $data = ["email" => $email];
+            echo Ti::render("view/passForget/avisoEnvioAlCorreo.phtml", $data);
+        } else { //si el mail esta vacio retorna al captcha
+            echo Ti::render("view/passForget/passOlvidada.phtml");
+        }
     }
-    /* aquí restablecemos la contraseña */
-    public function cambioPass()
+    /* restablecemos la contraseña get*/
+    public function cambioPass($validUsuario)
     {
-        /* Tenemos que tener el email en todo momento para poder hacer el cambio
-        Yo lo dejo casi hecho pero no sé como lo recogerías, asi que te dejo una variable, pero yo para hacer
-        la comprobación la meto a pincho, para saber si funciona todo correcto.
-        De ser así solo tienes que poner el email. */
-        $email = "alba@gmail.com";/* Lo pongo a pincho pero aquí si ya está verificado, el email tendría que recogerse aquí */
-        $newPass = $_REQUEST["password"];
+        $existeNumBase = (new Orm)->existeNumValidacion($validUsuario);
+        $oldToken = $validUsuario;
+        if ($existeNumBase) {
+            $dataHide = ["oldToken" => $oldToken];
+            echo Ti::render("view/passForget/restablecerPass.phtml", $dataHide); //formulario     
+            //(new Orm)->caducidadNumValidacion($email,$newToken); NOBORRAR
+        } else {
+            global $URL_PATH;
+            header("Location: $URL_PATH/");
+        }
+    }
+
+    /* mostramos mensaje y actualizamos cambios en bd  post*/
+    public function restablecePassFin()
+    {
+        $oldToken = $_REQUEST["oldToken"] ?? "";
+        //cambio validacion    
+        $objeto = new UserController;
+        $newToken = $objeto->dameUnAleatorio();
+        (new Orm)->cambiarValidacionCB($newToken, $oldToken);
+        //cambio contraseña del $newToken
+        $newPass = $_REQUEST["password"] ?? "";
         $newPassHash = password_hash($newPass, PASSWORD_DEFAULT);
-        (new Orm)->cambioPassword($newPassHash, $email);
+        (new Orm)->cambioPassword($newPassHash, $newToken);
         echo Ti::render("view/passForget/passCambiada.phtml");
     }
+
 
     /* ***** */
 }

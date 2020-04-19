@@ -102,12 +102,64 @@ class Orm
         $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, sobreti, gustos, loquebuscas, aficiones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto, $validacion, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficiones]);
     }
+    function obtenerNumValidacion($email)
+    {
+        $bd = Klasto::getInstance();
+        $sql = "SELECT validacion FROM usuario WHERE email = ?";
+        $dato = $bd->queryOne($sql, [$email]);
+        return $dato["validacion"]; // devuelvo numero
+        //SELECT validacion FROM `usuario` WHERE email = 'alba@gmail.com';
+        //return $bd->queryOne($sql, [$email])["COUNT(*)"];        
+    }
 
     /* ********* */
+    function existeNumValidacion($validacion)
+    {        
+        $bd = Klasto::getInstance();
+        $sql = "SELECT COUNT(*) FROM usuario WHERE validacion = ?";
+        return $bd->queryOne($sql, [$validacion])["COUNT(*)"];        
+    }
+    
+    
+    function cambiarValidacionCB($newToken,$oldToken)
+    {
+        Klasto::getInstance()->execute(
+            "UPDATE usuario SET validacion = ? where validacion = ?",
+            [$newToken,$oldToken]
+        );    
+    }
+    
+    function dimeSiCuentaActivada($validacion)
+    {
+        $bd = Klasto::getInstance();            
+        $sql = "SELECT activada FROM usuario where validacion = ?";
+        $dato =  $bd->queryOne($sql, [$validacion]);  
+        return $dato["activada"];   //saco solo el 1
+        //SELECT activada from usuario where validacion = '134905271485'
+    }
+    
+    public function poner1Activada($validacion)
+    {
+        Klasto::getInstance()->execute(
+            "UPDATE usuario SET activada = '1' where validacion = ? ",
+            [$validacion]
+        );       
+    }   
+    
+    public function caducidadNumValidacion($email,$newToken)
+    {              
+        /* NOBORRAR encendemos el generador a los 15 minutos */        
+        //Klasto::getInstance()->execute("CALL aleatoriodb()");
+        //Klasto::getInstance()->execute("CALL onevento()");        
+        //Klasto::getInstance()->execute("CALL offevento()");
+        //Klasto::getInstance()->execute("CALL setglobalevent1()");
+        //Klasto::getInstance()->execute("CALL setglobalevent0()");        
+        Klasto::getInstance()->execute("CALL setglobalevent1()");
+        sleep(3);
+        Klasto::getInstance()->execute("CALL onevento()");         
+    }    
 
-
-
-
+    /* ********* */
 
     /* sacamos datos del paquete de zona vip el nombre y precio */
     function obtenerPaquete($id)
@@ -214,11 +266,11 @@ class Orm
     }
 
     /* Hacemos un cambio de password por que se le ha podido olvidar */
-    public function cambioPassword($newPass, $email)
+    public function cambioPassword($newPassHash,$newToken)
     {
         return Klasto::getInstance()->execute(
-            "UPDATE `usuario` SET `password`=? WHERE email = ?",
-            [$newPass, $email]
+            "UPDATE `usuario` SET `password`=? WHERE validacion = ?",
+            [$newPassHash,$newToken]
         );
         
     }

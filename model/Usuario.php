@@ -13,6 +13,7 @@ class Usuario{
     public $rol;
     public $compra_rango;
     public $validacion;
+    public $activada;
     public $sobreti;
     public $gustos;
     public $loquebuscas;
@@ -20,7 +21,6 @@ class Usuario{
     public $apellidos;
     public $hechizos;
 }
-
 
     
 

@@ -50,10 +50,9 @@ Macaw::post($URL_PATH . '/postregistro', "controller\UserController@formularioRe
 
 
 //Post-registro
-//
 Macaw::post($URL_PATH . '/registro', "controller\UserController@procesarRegistro");
 Macaw::get($URL_PATH . '/api/comprobarLogin/(:any)', "controller\ApiController@apiComprobarLogin");
-Macaw::get($URL_PATH . '/activada', "controller\UserController@cuentaActivada");
+Macaw::get($URL_PATH . '/activate/(:num)/(:any)', "controller\UserController@cuentaActivada");
 
 /* ******************************** */
 
@@ -61,7 +60,8 @@ Macaw::get($URL_PATH . '/activada', "controller\UserController@cuentaActivada");
 
 Macaw::get($URL_PATH . '/passOlvidada', "controller\UserController@passOlvidada");
 Macaw::post($URL_PATH . '/restablecerPass', "controller\UserController@restablecePass");
-Macaw::post($URL_PATH . '/restablecer', "controller\UserController@cambioPass");
+Macaw::get($URL_PATH . '/restablecer/(:any)', "controller\UserController@cambioPass");
+Macaw::post($URL_PATH . '/restablecerPassFin', "controller\UserController@restablecePassFin");
 Macaw::get($URL_PATH . '/api/recaptcha/(:any)', "controller\ApiController@recaptcha");
 
 
