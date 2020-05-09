@@ -63,11 +63,11 @@ class ApiController extends Controller
         (new Orm)->informacionPasarela($cod_pedido, $importe, $estado, $cod_operacion);
 
         if($estado == "ok"){
-            $msg = "Servidor de la tienda informado del pago correcto";
+            $msg = "Servidor de la tienda informado del pago correcto.";
           }else if($estado == "nook"){
-            $msg = "Servidor de la tienda informado de un problema de pago";
+            $msg = "Servidor de la tienda informado de un problema de pago.";
           }else if($estado == "cancelado"){
-            $msg = "Servidor de la tienda informado del usuario canceló el pago";
+            $msg = "Servidor de la tienda informado de que fue cancelado el pago por el usuario.";
           }
 
         echo json_encode($msg);
