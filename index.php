@@ -72,10 +72,10 @@ Macaw::get($URL_PATH . '/zonavip', "controller\PostController@vip");
 Macaw::get($URL_PATH . '/api/descripcion/(:any)', "controller\ApiController@descripcionPagoElegido");
 //Zona vip envio de la compra
 Macaw::post($URL_PATH . '/compra', "controller\UserController@procesarCompra");
-//pasarela informa
-Macaw::get($URL_PATH . '/informa', "controller\ApiController@informa");
 
 /* ******** */
+//pasarela informa
+Macaw::get($URL_PATH . '/informa', "controller\ApiController@informa");
 //pasarela retorno
 Macaw::get($URL_PATH . '/retorno', "controller\UserController@retorno");
 //Eliminar datos 

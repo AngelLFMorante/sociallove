@@ -50,7 +50,6 @@ class ApiController extends Controller
         echo json_encode($data);
     }
     /* ******** */
-
     /* informar de la realizacion de la compra mediante pasarela */
     public function informa()
     {
@@ -63,7 +62,13 @@ class ApiController extends Controller
 
         (new Orm)->informacionPasarela($cod_pedido, $importe, $estado, $cod_operacion);
 
-        $msg = "Servidor de la tienda informado";
+        if($estado == "ok"){
+            $msg = "Servidor de la tienda informado del pago correcto";
+          }else if($estado == "nook"){
+            $msg = "Servidor de la tienda informado de un problema de pago";
+          }else if($estado == "cancelado"){
+            $msg = "Servidor de la tienda informado del usuario canceló el pago";
+          }
 
         echo json_encode($msg);
     }

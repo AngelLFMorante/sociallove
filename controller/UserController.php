@@ -230,6 +230,7 @@ class UserController extends Controller
         $concepto = "Hechizos";
         header("Location: http://localhost/pasarela/index.php?cod_comercio=$cod_comercio&cod_pedido=$cod_pedido&importe=$importe&concepto=$concepto");
     }
+    
     /* devolvemos el retorno de la pasarela */
     public function retorno()
     {

@@ -194,10 +194,10 @@ class Orm
             [$id_producto, $id_pedido]
         );
     }
-
+    
 
     /*informacion de la pasarela de si a pagado a cancelado o ha surgido error  */
-    public function informacionPasarela($cod_pedido, $importe, $estado, $cod_operacion)
+    public function informacionPasarela($importe, $estado, $cod_operacion)
     {
         return Klasto::getInstance()->execute(
             "UPDATE `pedido` SET `pago`=?,`cod_operacion`=?,`importe`=?",
