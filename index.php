@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 require 'cargarconfig.php';
-require 'fb-login/fb-init.php';
+session_start();
 
 
 use NoahBuscher\Macaw\Macaw;
@@ -53,6 +53,11 @@ Macaw::post($URL_PATH . '/postregistro', "controller\UserController@formularioRe
 Macaw::post($URL_PATH . '/registro', "controller\UserController@procesarRegistro");
 Macaw::get($URL_PATH . '/api/comprobarLogin/(:any)', "controller\ApiController@apiComprobarLogin");
 Macaw::get($URL_PATH . '/activate/(:num)/(:any)', "controller\UserController@cuentaActivada");
+
+// hechizos
+Macaw::get($URL_PATH . '/hechizos/(:any)', "controller\UserController@hechizosFormu");
+Macaw::post($URL_PATH . '/hechizos', "controller\UserController@hechizosFormuPost");
+
 
 /* ******************************** */
 

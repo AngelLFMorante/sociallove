@@ -157,7 +157,32 @@ class Orm
         Klasto::getInstance()->execute("CALL setglobalevent1()");
         sleep(3);
         Klasto::getInstance()->execute("CALL onevento()");         
+    }  
+      
+    public function checkSiInvitCompletada($login)
+    {   
+        $bd = Klasto::getInstance();
+        $sql = "SELECT invitaciones FROM emailhechizos WHERE login = ?";
+        $dato = $bd->queryOne($sql, [$login]);  
+        if($dato === null){return 0;}
+        return $dato;
+        //return $dato["invitaciones"]; // saco el numero        
     }    
+    
+    public function insertUser1vezHechizos($login,$invitaciones)
+    {
+        $bd = Klasto::getInstance();
+        $sql = "INSERT INTO emailhechizos (login,invitaciones) VALUES (?, ?)";
+        $bd->execute($sql, [$login,$invitaciones]);
+    }
+    
+    public function insertMailsUsuario($login,$updateEmails,$invitaciones)
+    {
+        $bd = Klasto::getInstance();        
+        $sql = "UPDATE emailhechizos set emails = ?, invitaciones = ? where login = ?";       
+        $bd->execute($sql, [$updateEmails,$invitaciones,$login]);
+    }
+
 
     /* ********* */
 
@@ -205,15 +230,15 @@ class Orm
         );
     }
 
-    /* sacar datos del cod_pedido */
-    public function sacarDatosPedidoPasarela($cod_pedido)
-    {
-        return Klasto::getInstance()->queryOne(
-            "SELECT pago, cod_operacion, importe,usuario_login FROM pedido where id=?",
-            [$cod_pedido],
-            "model\Pedido"
-        );
-    }
+     /* sacar datos del cod_pedido */
+     public function sacarDatosPedidoPasarela($cod_pedido)
+     {
+         return Klasto::getInstance()->queryOne(
+             "SELECT pago as precio, cod_operacion as pago, importe,usuario_login FROM pedido where id=?",
+             [$cod_pedido],
+             "model\Pedido"
+         );
+     }
     /* sacamos la id del pedido, ya que no coincide el cod_pedido con la id */
     public function idDelPedido($id)
     {

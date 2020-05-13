@@ -20,6 +20,8 @@ class Usuario{
     public $aficiones;
     public $apellidos;
     public $hechizos;
+    public $rol_id;
+    public $busco;
 }
 
     

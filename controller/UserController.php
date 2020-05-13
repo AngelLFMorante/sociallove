@@ -7,6 +7,7 @@ require_once("funciones.php");
 use \model\Orm;
 use \dawfony\Ti;
 use model\Usuario;
+use model\UsuarioFace;
 
 class UserController extends Controller
 {
@@ -55,10 +56,12 @@ class UserController extends Controller
     public function hacerLogout()
     {
         global $URL_PATH;
+        //aqui estaría la variable sesion_start();
         session_unset();
         session_destroy();
         header("Location: $URL_PATH/");
     }
+    
     /*****ALBERTO******/
     public function formularioRegistro()
     {
@@ -308,6 +311,34 @@ class UserController extends Controller
         $newPassHash = password_hash($newPass, PASSWORD_DEFAULT);
         (new Orm)->cambioPassword($newPassHash, $newToken);
         echo Ti::render("view/passForget/passCambiada.phtml");
+    }
+
+    public function hechizosFormu($login) {
+        global $URL_PATH;     
+        $arrcompletada = (new Orm)->checkSiInvitCompletada($login);            
+        $completada = $arrcompletada["invitaciones"]; //saco el valor del array          
+        if(!$arrcompletada) { // null = primera vez que entra; se crea el registro
+            //echo "null es la primera vez que entra el usuario, ahora lo inserto y le pongo valor 0";           
+            $invitaciones = 0;        
+            (new Orm)->insertUser1vezHechizos($login,$invitaciones);            
+            echo Ti::render("view/hechizos/hechizosView.phtml", compact('login'));
+        } elseif ($completada == 0) { // si es 0 = formulario incompleto
+            //echo "valor 0, incompleto, mostrar formulario";
+            $hechizos = $_SESSION['hechizos'];            
+            echo Ti::render("view/hechizos/hechizosView.phtml", compact('login')); 
+        } else { // si es 1 = completado
+            echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login')); 
+        }    
+    }
+    
+    public function hechizosFormuPost(){
+        global $URL_PATH;
+        $arrEmailHechizos = $_REQUEST['arrayx'] ?? "";       
+        $updateEmails = implode(",", $arrEmailHechizos);
+        $login = $_SESSION['login'];
+        $invitaciones = 1; 
+        (new Orm)->insertMailsUsuario($login,$updateEmails,$invitaciones);       
+        echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login'));   
     }
 
 
