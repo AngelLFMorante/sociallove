@@ -54,8 +54,18 @@ class Orm
         $limite = $config["post_per_page"];
         $offset = ($pagina - 1) * $limite;
         return  Klasto::getInstance()->query(
-            "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like(SELECT busco from usuario where login=?) EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ?)  LIMIT $limite OFFSET $offset",
+            "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where genero like(SELECT busco from usuario where login=?) EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ? or rol_id=0)  LIMIT $limite OFFSET $offset",
             [$login, $login],
+            "model\Usuario"
+        );
+    }
+    function listadoPersonas($pagina = 1, $login){
+        global $config;
+        $limite = $config["post_per_page"];
+        $offset = ($pagina - 1) * $limite;
+        return  Klasto::getInstance()->query(
+            "SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario  EXCEPT(SELECT foto_perfil as foto, login, edad,ubicacion,genero FROM usuario where login = ? )  LIMIT $limite OFFSET $offset",
+            [$login],
             "model\Usuario"
         );
     }
@@ -64,8 +74,16 @@ class Orm
     function contadorPersonas($login)
     {
         return Klasto::getInstance()->queryOne(
-            "SELECT count(genero) as cantidadPersonas FROM usuario WHERE genero like (SELECT busco from usuario where login=?)  ",
+            "SELECT count(genero) as cantidadPersonas FROM usuario WHERE genero like (SELECT busco from usuario where login=?) and rol_id=1 ",
             [$login],
+            "model\Usuario"
+        );
+    }
+    function contadorPersonasAdmin()
+    {
+        return Klasto::getInstance()->queryOne(
+            "SELECT count(*) as cantidadPersonas FROM usuario where rol_id = 1 ",
+            [],
             "model\Usuario"
         );
     }

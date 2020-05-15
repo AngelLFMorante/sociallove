@@ -1,0 +1,59 @@
+<?php
+// necesitamos la trayectoria de la URL para formar las rutas:
+global $URL_PATH;
+global $login_url;
+\dawfony\Ti::extend("view/cabeceras/headerView.phtml");
+\dawfony\Ti::endExtend();
+?>
+<body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
+    background-repeat: repeat;
+    background-color: #fbf6f9;">
+    <?php
+     \dawfony\Ti::extend("view/cabeceras/perfilView.phtml");
+    \dawfony\Ti::endExtend();
+    ?>
+    <div class="container fondo-personas">
+    <div id="comentarios">
+        <h4>Comentarios:</h4>
+        <?php foreach ($sacarMensajes as $comentario) : ?>
+            <div class="row border-top border-rounded">
+                <div id="comentarioPrincipal" class="col-sm-8">
+                    <?= $comentario->texto ?>
+                </div>
+                <col-sm-4>
+                    Por <a href="<?= $URL_PATH ?>/perfil/<?= $comentario->uEnviado ?>"><?= $comentario->uEnviado ?></a>
+                    el <?= $comentario->fecha ?> <a href="<?= $URL_PATH ?>/comentar/<?= $comentario->uEnviado ?>">
+                        &nbsp;<i id="coment-icon" class="fas fa-comment-dots"></i></a>
+                    <a href="javascript:void(0)" onclick="borrarComent('<?= $comentario->uEnviado ?>','<?= $comentario->id ?>')">
+                        &nbsp;<i id="trash-icon" class="fas fa-trash-alt"></i></a>
+                </col-sm-4>
+            </div>
+        <?php endforeach; ?>
+        <!-- Paginación -->
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li class="page-item <?= ($pagina  <= 1 ? "disabled" : "") ?>">
+                    <a class="page-link" href="<?= $ruta . ($pagina - 1) ?>" tabindex="-1" aria-disabled="true">Anterior</a>
+                </li>
+                <?php
+                for ($i = 1; $i <= $numpaginas; $i++) {
+                ?>
+
+                    <li class="page-item ">
+                        <a class="page-link" href="<?= $ruta ?><?= $i ?>"><?= $i ?></a>
+                    </li>
+
+                <?php
+                }
+                ?>
+                <li class="page-item <?= ($pagina + 1 > $numpaginas ? "disabled" : "") ?>">
+                    <a class="page-link" href="<?= $ruta . ($pagina + 1) ?>" aria-disabled="true">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+    </div>
+</body>
+<?php \dawfony\Ti::extend("view/cabeceras/footerView.phtml"); ?>
+<?php \dawfony\Ti::endExtend(); ?>

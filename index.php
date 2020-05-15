@@ -35,8 +35,6 @@ Macaw::get($URL_PATH . '/listado/page/(:num)', "controller\PostController@listad
 Macaw::get($URL_PATH . '/busqueda', "controller\PostController@busquedaUsuario");
 Macaw::get($URL_PATH . '/busqueda/page/(:num)', "controller\PostController@busquedaUsuario");
 
-//mirar el correo
-Macaw::get($URL_PATH . '/correo', "controller\PostController@listaCorreo");
 
 /* ******** */
 //ver perfil
@@ -93,6 +91,28 @@ Macaw::get($URL_PATH . '/retorno', "controller\UserController@retorno");
 //Eliminar datos 
 Macaw::get($URL_PATH . '/eliminarDatos/(:num)', "controller\UserController@eliminarDatos");
 
+/**Carlos **/
+
+//hechizar
+Macaw::get($URL_PATH . '/api/hechizar/(:any)', "controller\ApiController@hechizar");
+//gastar hechizo
+Macaw::get($URL_PATH . '/api/hechizar/', "controller\ApiController@gastarHechizo");
+//borrar perfil
+Macaw::get($URL_PATH . '/borrarPerfil/(:any)', "controller\UserController@borrarPerfil");
+//notificaciones
+Macaw::get($URL_PATH . '/notificaciones', "controller\UserController@notificaciones");
+Macaw::get($URL_PATH . '/perfil/notificacion/(:any)', "controller\UserController@notificacionesPerfil");
+
+/* ******** */
+//pagina principal (AQUÍ TIENE QUE IR LA DIRECCIÓN DE CORREO)
+Macaw::get($URL_PATH . '/correo', "controller\PostController@correo");
+Macaw::get($URL_PATH . '/correolist/page/(:num)', "controller\PostController@correo");
+//comentar
+Macaw::get($URL_PATH . '/comentar/(:any)', "controller\PostController@Comentar");
+//enviar comentario
+Macaw::post($URL_PATH . '/sendComent/(:any)', "controller\PostController@newComentario");
+//borrar comentario
+Macaw::get($URL_PATH . '/deleteComent/(:any)', "controller\PostController@deleteComent");
 
 // Captura de URL no definidas.
 Macaw::error(function() {

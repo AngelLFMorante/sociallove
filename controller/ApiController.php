@@ -3,6 +3,7 @@
 namespace controller;
 
 use \model\Orm;
+use \model\OrmPerfil;
 
 require_once("funciones.php");
 
@@ -76,14 +77,8 @@ class ApiController extends Controller
     /* Recaptcha fetch */
     public function recaptcha($responseCaptcha)
     {
-        /* LEEME */
+       
         header('Content-type: application/json'); 
-        /* AQUI VA TODO LO QUE SERIA EL FETCH PERO 
-        TENEMOS UN PROBLEMA QUE NO CONSIGO VER,
-        TODO LO DEMAS SERÍA ASÍ PARA MANDARLO A LA RESPUESTA DEL FETCH,
-        ESTO ME DARÁ FALSE o TRUE.
-        PERO TENEMOS EL ERROR ESE QUE NO NOS DEJA HACER NADA.
-        DE MOMENTO SE QUEDA ASI,HASTA NUEVO AVISO */
         $secret = '6LdAh-kUAAAAAAMDdm1Lw-qYSF7OT2NXRXmi8sxQ';
         $captcha = $responseCaptcha; 
         $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha");
@@ -91,6 +86,24 @@ class ApiController extends Controller
         var_dump($arr['success']);
         echo json_encode($arr['success']);
          
+    }
+     /*carlos*/
+	public function hechizar($login)
+    {
+        $data["estado"] = (new OrmPerfil)->hechizarODeshechizar($login, $_SESSION["login"]);
+        echo json_encode($data);
+    }
+
+    public function gastarHechizo()
+    {
+        $hechizos = (new Orm)->contadorHechizos($_SESSION["login"]);
+        if ($hechizos > 0) {
+            (new OrmPerfil)->gastarHechizo($_SESSION["login"]);
+        } else {
+            return false;
+        }
+        $devolverhechizos = (new Orm)->contadorHechizos($_SESSION["login"]);
+        echo json_encode($devolverhechizos);
     }
     
 }

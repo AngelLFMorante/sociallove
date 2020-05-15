@@ -43,17 +43,18 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                                     <!-- falta hacer las notificaciones como el carrito compra que salga abajo si hay gente que te ha visitado -->
                                     <div class="header-mini-cart  pull-left open" id="formCompra">
                                         <span class="nav-link dropdown-toggle" height="70px" width="70px" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="verNotificaciones()"><i class="fas fa-bell"></i></span>
-                                        <span>
-                                            <!-- AQUI VA EL NUMERO DE NOTIFIACIONES RECIBIDAS, FONDO ROJO,NUMERO EN BLANCO,CON ANIMACION DE PARPADEO UNA VEZ ABIERTO DESAPARECE. --></span>
+                                        <?php if ($_SESSION['notificaciones'] > 0) : ?>
+                                            <span class="num-notificaciones"><?= $_SESSION['notificaciones'] ?></span>
+                                            <?php endif; ?>
                                         <div class="dropdown-menu shopping-cart-content pull-right notificaciones">
                                             <div class="shopping-cart-items">
                                                 <div class="lg-left">
-                                                    <span class="span-notify style-font"><b>Han visto tu perfil</b></span>
+                                                    <span class="span-notify style-font"><b>Te han hechizado</b></span>
                                                     <table class="style-font">
                                                         <tr>
                                                             <!-- Personas que han visto nuestro perfil lo sacamos luego cuando tengamos perfil...(no nos rayamos). -->
                                                             <!-- Cuidado que esta un tr y luego -->
-                                                            <td> 0 PERSONA/s</td>
+                                                            <td><a href="<?= $URL_PATH ?>/notificaciones"><?= $_SESSION['notificaciones'] ?> PERSONA/s</a></td>
                                                             <td></td>
                                                             <td></td>
                                                         </tr>
@@ -64,7 +65,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                                     </div>
                                 </li>
                             </ul>
-                            <form class="form-inline my-2 my-lg-1" action="<?= $URL_PATH ?>/busqueda" onsubmit="return validarBusqueda()" method="Get">
+                            <form  class="form-inline my-2 my-lg-1 formArreglo" action="<?= $URL_PATH ?>/busqueda" onsubmit="return validarBusqueda()" method="Get">
                                 <input type="text" name="busquedaUsuario" id="busqueda" onkeypress="return buscarUsuario()" aria-label="Search" class="form-control form-control mr-sm-1" placeholder="Búsqueda por gustos,nombre,ubicacion o aficiones ">
                                 <button type="submit" class="btn btn-outline-light my-2 my-sm-0"><i class="fas fa-search "></i></button>
                             </form>
@@ -122,7 +123,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                                     });
                                 </script>
                             <?php endif; ?>
-                            <form class="form-inline" action="<?= $URL_PATH ?>/login" method="post">
+                            <form  class="form-inline formArreglo" action="<?= $URL_PATH ?>/login" method="post">
                                 <div class="form-group">
                                     <div class="form-group  mb-2">
                                         <input class="form-control form-control-sm" type="text" onchange="comprobarlogin()" id="mail" name="email" placeholder="correo electrónico" value="<?php if (isset($_COOKIE["usuario"])) : ?><?= $_COOKIE["usuario"]; ?> <?php endif ?>" required>
@@ -202,7 +203,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
         <?php \dawfony\Ti::endBlock(); ?>
 
         <!-- ********************** Modal registro ******************************************* -->
-        <form action="<?= $URL_PATH ?>/postregistro" method="post" id="formuModal">
+        <form  action="<?= $URL_PATH ?>/postregistro" method="post" id="formuModal">
             <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">

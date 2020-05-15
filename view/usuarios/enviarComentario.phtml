@@ -1,0 +1,38 @@
+<?php
+// necesitamos la trayectoria de la URL para formar las rutas:
+global $URL_PATH;
+global $login_url;
+\dawfony\Ti::extend("view/cabeceras/headerView.phtml");
+\dawfony\Ti::endExtend();
+?>
+
+<body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
+    background-repeat: repeat;
+    background-color: #fbf6f9;">
+    <?php
+     \dawfony\Ti::extend("view/cabeceras/perfilView.phtml");
+    \dawfony\Ti::endExtend();
+    ?>
+    <div class="container fondo-personas">
+        <!-- Aquí se va a inyectar los comentarios -->
+        <!-- <h1>Zona Correo</h1> -->
+        <form id="formuComen" method="POST" action="<?= $URL_PATH ?>/sendComent/<?= $loginUsu ?>">
+            <div class="form-group row">
+                <div class="col-sm-8">
+                    <textarea placeholder="Rompe el hielo" class="form-control" rows="6" name="texto" id="textoArea"></textarea>
+                </div>
+                <input name="usuarioHaceEnvio" value="<?= $_SESSION["login"] ?>" type="hidden"><!-- aquí en value tiene que ir Session login que sería el que hace el envio porque está conectado -->
+                <button type="submit" class="btn btn-dos" id="botonSend"><i id="send" class="fas fa-paper-plane"></i></button>
+            </div>
+
+        </form>
+    </div>
+    <script>
+        <?php /* trumbowyg es un editor de texto enriquecido. Lo activamos con jquery */ ?>
+        $('#textoArea').trumbowyg({
+            lang: 'es'
+        });
+    </script>
+</body>
+<?php \dawfony\Ti::extend("view/cabeceras/footerView.phtml"); ?>
+<?php \dawfony\Ti::endExtend(); ?>

@@ -28,8 +28,7 @@ global $login_url;
     <script src="<?= $URL_PATH ?>/vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="<?= $URL_PATH ?>/node_modules/bootstrap-social/bootstrap-social.css">
     <?php /* Font awesome CDN */ ?>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
     <link rel="stylesheet" href="<?= $URL_PATH ?>/node_modules/font-awesome/css/font-awesome.min.css">
     <?php /* Animate.css CDN */ ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
@@ -66,7 +65,18 @@ global $login_url;
     <script src="<?= $URL_PATH ?>/js/changePass.js"></script>
     <!-- Alberto -->
     <script src="<?= $URL_PATH ?>/js/validacionPreFormulario.js"></script>
-     
+    <!-- Carlos -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUeBEZ-J7vCRpYjRz4skVkH9VRfXSMplA&callback=initMap">
+    </script>
+    <script src="<?= $URL_PATH ?>/js/map.js"></script>
+    <script src="<?= $URL_PATH ?>/js/hechizos.js"></script>
+    <script src="<?= $URL_PATH ?>/js/borrarPerfil.js"></script>
+    <script src="<?= $URL_PATH ?>/js/borrarComent.js"></script>
+    <!-- Include trumbowyg editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.20.0/ui/trumbowyg.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.20.0/trumbowyg.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.20.0/langs/es.js" integrity="sha256-EJXkD+I8Q24ePB4zheYqkfIKmlz2jYRUBLUzrwSdAt4=" crossorigin="anonymous"></script>
+    
     <script>
         var URL_PATH = "<?= $URL_PATH ?>"; // Pasamos el URL_PATH de php a Javascript.
         var error = false; //esto es para el formulario login y  comprobamos si el email que ha introducido está bien sino que lo escriba de nuevo.

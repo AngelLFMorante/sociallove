@@ -117,10 +117,11 @@ img {
     border-radius: 10px;
 }
 
-form {
+.formArreglo{
     float: right;
     width: 50%;
 }
+
 
 .img-container {
     float: left;
@@ -579,3 +580,256 @@ h6{
     display: inline-block;
     height: 60px;
 }
+/* Carlos */
+
+.contenedor-perfil {
+    width: 1450px;
+    height: 275px;
+    margin: 0 auto;
+    filter: blur(15px);
+}
+
+.contenedor-perfil>img {
+    width: 1450px;
+    object-fit: fill;
+}
+
+.imagen-perfil-grande {
+    width: 200px;
+    height: 200px;
+    border-radius: 100px;
+    border: 5px solid;
+}
+
+.imagen-perfil-grande:hover {
+    color: #f40083;
+    position: relative;
+    cursor: pointer;
+}
+
+.contenedor-img-perfil-grande {
+    display: inline-block;
+    position: relative;
+    margin-right: 15%;
+}
+
+.perfil-data {
+    padding-left: 30px;
+    padding-right: 5px;
+    display: inline-block;
+}
+
+.contenedor-perfil-grande {
+    clear: both;
+    border-spacing: 0;
+    color: #fff;
+    text-shadow: none;
+    height: 275px;
+    position: absolute;
+    text-align: center;
+
+    max-width: 850px;
+    margin: 0 auto;
+    width: 840px;
+    box-sizing: border-box;
+    padding: 1%;
+    top: 150px;
+    left: 350px;
+}
+
+.parent {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    padding: 30px;
+}
+.parent > div > h1 {
+    color:black;;
+}
+
+.div1 {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.div2 {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.div3 {
+    grid-area: 3 / 1 / 4 / 2;
+    text-align: center;
+}
+
+.div4 {
+    grid-area: 1 / 2 / 2 / 3;
+    padding-left: 10%;
+}
+
+.div5 {
+    grid-area: 2 / 2 / 3 / 3;
+    padding-left: 10%;
+}
+
+.div6 {
+    grid-area: 3 / 2 / 4 / 3;
+    padding-left: 10%;
+}
+
+.detalles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.detalles1 {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.detalles2 {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.detalles3 {
+    grid-area: 1 / 2 / 2 / 3;
+}
+
+.detalles4 {
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+.detalles5 {
+    grid-area: 1 / 3 / 2 / 4;
+}
+
+.detalles6 {
+    grid-area: 2 / 3 / 3 / 4;
+}
+
+#map {
+    height: 220px;  /* The height is 400 pixels */
+    width: 220px;  /* The width is the width of the web page */
+   }
+
+.hechizo {
+    position: relative;
+    left: 50%;
+    background-color: #f40083;
+    color: #fff;
+}
+.nohechizo {
+    position: relative;
+    left: 50%;
+    background-color:red;
+    color: #fff;
+}
+.linkenblanco{
+    text-decoration: none;
+    color: #fff;
+}
+.linkenblanco:hover {
+    text-decoration: none;
+    color: #fff;
+}
+.cabecera-detalles {
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    text-transform: uppercase;
+}
+.detalles-perfil {
+    text-transform: uppercase;
+    vertical-align: baseline;
+    line-height: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    color: gray;
+    font-weight: bold;
+}
+.detalles-perfil:hover {
+    color: #f40083;
+}
+div > p {
+    color: black;
+}
+.descripcion:hover {
+    color: #f40083;
+    cursor: pointer;
+}
+
+.num-notificaciones {
+    width: 10px;
+    height: 10px;
+    border-radius: 100px;
+    border: 1px solid #f40083;
+    background-color: red;
+    color: white;
+}
+
+.boton-chat {
+    position: relative;
+    left: 20%;
+    top:45%;
+    background-color: #f40083;
+    color: #fff;
+}
+/* correo */
+#comentarios {
+    width: 100%;
+    height: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
+#coment-icon {
+    color: pink;
+
+}
+
+#trash-icon {
+    color: red;
+
+}
+
+.btn-dos {
+    color: #FB39CB;
+    background-color: pink;
+    font-size: 25px;
+    width: 75px;
+    height: 75px;
+    border: none;
+}
+
+.btn-dos:hover {
+    color: pink;
+    background-color: #FB39CB;
+    font-size: 25px;
+    border: none;
+}
+
+#send:hover {
+    cursor: pointer;
+}
+#send{
+    display: flex;
+    align-self: center;
+}
+
+#textoArea {
+    resize: none;
+}
+#formuComen {
+    display: flex;
+    justify-content: flex-end;
+}
+#botonSend {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+}
+

@@ -1,0 +1,141 @@
+<?php
+// necesitamos la trayectoria de la URL para formar las rutas:
+global $URL_PATH;
+global $login_url;
+\dawfony\Ti::extend("view/cabeceras/headerView.phtml");
+\dawfony\Ti::endExtend();
+?>
+<!-- La cabecera de busqueda, perfil y notificaciones -->
+
+<body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
+    background-repeat: repeat;
+    background-color: #fbf6f9;">
+   <?php
+     \dawfony\Ti::extend("view/cabeceras/perfilView.phtml");
+    \dawfony\Ti::endExtend();
+    ?>
+    <!-- Foto, nick, edad ... del perfil seleccionado -->
+    <div class="contenedor-perfil">
+        <img src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $perfil->genero ?>s/<?= $perfil->foto ?>" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </div>
+    <div class="contenedor-perfil-grande">
+        <div class="contenedor-img-perfil-grande">
+            <img src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $perfil->genero ?>s/<?= $perfil->foto ?>" class="imagen-perfil-grande " href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </div>
+        <div class="perfil-data">
+            <div>
+                <h1><?= $perfil->login ?></h1>
+            </div>
+            <div>
+                <h3><?= $perfil->edad ?> años, <?= $perfil->ubicacion ?></h3>
+            </div>
+        </div>
+        <?php if ($perfil->login != $_SESSION["login"] && $_SESSION['rol_id'] == 0) : ?>
+            <a href="javascript:void(0)" onclick="borrarPerfil('<?= $perfil->login ?>')" class="btn btn-danger btn-sm boton-chat">¿Borrar perfil?</a>
+        <?php elseif ($perfil->login != $_SESSION["login"]) : ?>
+            <div>
+                <?php if ($hechizos['hechizos'] < 1) : ?>
+                    <h4 class="btn btn-sm <?= ($perfil->hechizado ? "nohechizo" : "hechizo") ?>" id="hechizar<?= $perfil->login ?>"><a href="<?= $URL_PATH ?>/zonavip" class="linkenblanco"><span id="textohechizo<?= $perfil->login ?>"><?= ($perfil->hechizado ? "Deshechizar" : "Hechizar") ?></span></a></h4>
+                <?php else : ?>
+                    <h4 class="btn btn-sm <?= ($perfil->hechizado ? "nohechizo" : "hechizo") ?>" id="hechizar<?= $perfil->login ?>" href="javascript:void(0)" onclick="hechizoClick('<?= $perfil->login ?>')"><span id="textohechizo<?= $perfil->login ?>"><?= ($perfil->hechizado ? "Deshechizar" : "Hechizar") ?></span></h4>
+                <?php endif; ?>
+            </div>
+        <?php else : ?>
+            <h4 class="btn btn-sm boton-chat"><a href="http://localhost:3000/" class="linkenblanco" target="_blank"><span id="textohechizo">Ir a chat</span></a></h4>
+        <?php endif; ?>
+    </div>
+    <div class="container fondo-personas">
+        <div class="grid-container-sesion container-fluid">
+            <div class="parent">
+                <div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d95777.52881590926!2d<?= $perfil->latitud ?>!3d<?= $perfil->longitud ?>!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xe3e0%3A0x0b0fb0d4f47660a!2s<?=$perfil->ubicacion?>!5e0!3m2!1ses!2ses!4v1589446158462!5m2!1ses!2ses" width="250" height="250" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                </div>
+                <div class="div2">
+                    <h3>Nuevos Usuarios</h3>
+                </div>
+                <div class="div3"> patata </div>
+                <div class="div4">
+                    <h5 class="cabecera-detalles">Detalles</h5>
+                    <hr>
+                    <div class="detalles">
+                        <div class="detalles1">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Relación Deseada</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles2">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Signo del zodiaco</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles3">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Pelo</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles4">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Me gusta comer</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles5">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Hobbies</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles6">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Profesión</span>
+                            <p>No indicado</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="div5">
+                    <h5 class="cabecera-detalles">Hobbies</h5>
+                    <hr>
+                    <div class="detalles">
+                        <div class="detalles1">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Deportes</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles2">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Instrumentos</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles3">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Animales</span>
+                            <p>No indicado</p>
+                        </div>
+                        <div class="detalles4">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Cultura</span>
+                            <p>No indicado</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="div6">
+                    <h5 class="cabecera-detalles descripcion" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>>Descripción&nbsp;&nbsp;&nbsp;&nbsp;<span><i class="fa fa-pencil" aria-hidden="true"></i></span></h5>
+                    <hr>
+                    <span><?= $perfil->sobreti ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modal Header</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Some text in the modal.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</body>
+<!-- MODAL -->
+<?php \dawfony\Ti::extend("view/cabeceras/footerView.phtml"); ?>
+<?php \dawfony\Ti::endExtend(); ?>

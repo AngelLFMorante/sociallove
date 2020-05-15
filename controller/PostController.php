@@ -2,6 +2,8 @@
 namespace controller;
 require_once ("funciones.php");
 use \model\Orm;
+use \model\OrmPerfil;
+use \model\Post;
 use \dawfony\Ti;
 
 class PostController extends Controller
@@ -64,14 +66,20 @@ class PostController extends Controller
         global $config;
         global $URL_PATH;
         $login = $_SESSION["login"];
-        $sacarLista = (new Orm)->listadoSesionIni($pagina,$login);
+        if($login == 'Admin'){
+            $sacarLista = (new Orm)->listadoPersonas($pagina,$login);
+            $cuenta = (new Orm)->contadorPersonasAdmin();
+        }else{
+            $sacarLista = (new Orm)->listadoSesionIni($pagina,$login);
+            $cuenta = (new Orm)->contadorPersonas($login);
+        }
         $hechizos = (new Orm)->contadorHechizos($login);
         $_SESSION['hechizos'] = $hechizos;
         /* Para paginación */
-        $cuenta = (new Orm)->contadorPersonas($login);
+        
         $numpaginas = ceil ($cuenta->cantidadPersonas / $config["post_per_page"]);
         $ruta = "$URL_PATH/listado/page/"; 
-
+        
         echo Ti::render("view/principal.phtml", compact("sacarLista","hechizos","cuenta", "numpaginas", "pagina", "ruta")); 
 
     }
@@ -102,6 +110,48 @@ class PostController extends Controller
     //Entramos en la zonaVip
     function vip(){
         echo Ti::render("view/vip/zonaVip.phtml");
+    }
+    
+    /* Sacar la lista de los comentarios
+    Cambiar el nombre de la función para que no sea la misma que en listado()
+    Esto es solo para hacer los comentarios*/
+    function correo($pagina = 1){
+        global $config; 
+        global $URL_PATH;  
+        $login =  $_SESSION['login'] ;
+        $hechizos = $_SESSION["hechizos"];
+        $sacarMensajes = (new OrmPerfil)->sacarMensajes($pagina,$login);
+        $cuenta = (new OrmPerfil)->contarUltimoPosts($login);
+        $numpaginas = ceil ($cuenta / $config["post_per_page_coments"]);
+        $title = "Listado";
+        $ruta = "$URL_PATH/correolist/page/";
+            
+        echo Ti::render("view/usuarios/correo.phtml", compact('sacarMensajes','title','ruta','cuenta','numpaginas','pagina', 'hechizos')); 
+    }
+
+    public function Comentar($usuario){
+        $loginUsu = $usuario;
+        echo Ti::render("view/usuarios/enviarComentario.phtml", compact('loginUsu'));
+    }
+
+     public function newComentario($usuario){
+        
+        global $URL_PATH;
+
+        $comentario = new Post;
+        $comentario ->fecha = date('Y-m-d H:i:s');
+        $comentario ->texto = sanitizar(strip_tags($_REQUEST["texto"]));
+        $comentario ->usuarioEnviado = $_REQUEST['usuarioHaceEnvio'];
+        $comentario ->usuarioRecibido = $usuario;
+        (new OrmPerfil) ->insertarComentario($comentario);
+        header("Location: " . $URL_PATH . "/correo");  
+    } 
+
+    public function deleteComent($id){
+        global $URL_PATH;
+        var_dump($id);
+        (new OrmPerfil)-> eliminarComentario($id);
+        header("Location: " . $URL_PATH . "/correo");   
     }
 
 
