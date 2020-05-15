@@ -45,7 +45,7 @@ function comprobaremail() {
 }
 
 function validarEmailCorrecto(valor) {
-    var regex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    var regex = /^['_a-zA-Z0-9-\+~]+(\.['_a-zA-Z0-9-\+~]+)*@([a-zA-Z_0-9-]+\.)+(([a-zA-Z]{2})|(aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel))$/;
     return regex.test(valor) ? true : false;
 }
 
@@ -137,16 +137,16 @@ function genero() {
 }
 // emails hechizosForm 1 metodos + ready + submit
 function validarsiEmailCorrecto(valor) {
-    var regex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    var regex = /^['_a-zA-Z0-9-\+~]+(\.['_a-zA-Z0-9-\+~]+)*@([a-zA-Z_0-9-]+\.)+(([a-zA-Z]{2})|(aero|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel))$/;
     return regex.test(valor) ? true : false;
 }
 
-$('#formularioHexizos').ready(function () { //cuando esté preparado el documento 
+$('#formularioHexizos').ready(function () { //cuando esté preparado el documento
     $("#loaderpost").css('visibility', 'hidden'); //oculto el loader
-    $('#formularioHexizos').on('change', function () { //detectarcambio en formu 
+    $('#formularioHexizos').on('change', function () { //detectarcambio en formu
         var arrayMails = [];
         $('input[name^="arrayx"]').each(function () { //los recorroo
-            emails = this.value; //obtengo el valor            
+            emails = this.value; //obtengo el valor
 
             if (emails) { //si contiene entro aqui dentro ,y  si es false paso de el
                 //console.log(emails)
@@ -158,10 +158,10 @@ $('#formularioHexizos').ready(function () { //cuando esté preparado el document
                     // verificamos si existe en bd
                     fetch(URL_PATH + "/api/comprobarEmail/" + emails)
                         .then((res) => res.json())
-                        .then((res) => {                                                     
-                             
+                        .then((res) => {
+
                             //*** REPETIDOS ****///// avisa  al momento
-                            var mailUserin = this.value; //email introducido                           
+                            var mailUserin = this.value; //email introducido
                             function inputsRepetidos(arrayMails, v) {
                                 if (arrayMails.indexOf(v) === -1) {
                                     arrayMails.push(v);
@@ -172,7 +172,7 @@ $('#formularioHexizos').ready(function () { //cuando esté preparado el document
                                     return false;
                                 }
                             }
-                            var hayInputsRep = inputsRepetidos(arrayMails, mailUserin);                          
+                            var hayInputsRep = inputsRepetidos(arrayMails, mailUserin);
 
                             if (res.emailExiste) {
                                 siExisteEnBD = true;
@@ -183,17 +183,17 @@ $('#formularioHexizos').ready(function () { //cuando esté preparado el document
                             } else if (!hayInputsRep) {
                                  $(this).removeClass("is-valid").addClass("is-invalid");
                                 document.getElementById("checkemail").innerHTML = "<i class='fa fa-close' style='color:red'>Email repetido";
-                                
+
                             } else {
                                 siExisteEnBD = false;
                                 //console.log("NO existe VERDE")
                                 $(this).removeClass("is-invalid").addClass("is-valid");
                                 document.getElementById("checkemail").innerHTML = "";
 
-                                $(this).removeClass("is-invalid").addClass("is-valid"); //pone tick 
+                                $(this).removeClass("is-invalid").addClass("is-valid"); //pone tick
                                 rst = $(this).attr("id");
                                 coleccionspan = document.getElementsByClassName(rst);
-                                //$(coleccionspan).removeClass("oculto").addClass("visible"); // y el corazon               
+                                //$(coleccionspan).removeClass("oculto").addClass("visible"); // y el corazon
                                 $(coleccionspan).fadeIn(1500);
                                 $(coleccionspan).show();
                                 $("#" + rst).attr("readonly", "readonly"); //bloqueo el q esta bien
@@ -214,10 +214,10 @@ $('#formularioHexizos').ready(function () { //cuando esté preparado el document
     });
 
     /* antes de enviar comprobamos si estan todos los email bien */
-    $("#thesubmitBoton").click(function (event) {        
-        $('input[name^="arrayx"]').each(function () { //los recorroo            
-            emails = this.value; //obtengo el valor     
-            var sinErrores = true;  
+    $("#thesubmitBoton").click(function (event) {
+        $('input[name^="arrayx"]').each(function () { //los recorroo
+            emails = this.value; //obtengo el valor
+            var sinErrores = true;
             var hayNOvalidos = document.getElementsByClassName("form-control ax1 is-invalid").length;
             if (emails !== "" && hayNOvalidos == 0) { //si estan vacios no se envian
                 //alert(emails)
@@ -239,3 +239,4 @@ $('#formularioHexizos').ready(function () { //cuando esté preparado el document
     });
 
 });
+

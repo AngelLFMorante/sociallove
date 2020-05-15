@@ -208,7 +208,172 @@ class UserController extends Controller
         $unAleatorio = rand(2, 99);  //aleatorio entre 0 y 99
         return $fechaInt * $unAleatorio;
     }
-
+    public function callbackphp(){        
+        global $URL_PATH; 
+        require_once("configfb.php");
+        
+        try {
+            
+            $accessToken = $handler->getAccessToken();
+            
+            if(!$accessToken){ //si dan a cancelar volvemos al index
+                header("Location: $URL_PATH/");
+            }
+            
+            }catch(\Facebook\Exceptions\FacebookResponseException $e){
+                echo "Response Exception: " . $e->getMessage();
+                exit();
+            }catch(\Facebook\Exceptions\FacebookSDKException $e){
+                echo "SDK Exception: " . $e->getMessage();
+                exit();
+            }
+        
+            /*if(!$accessToken){
+                header('Location: login.php');    
+                exit();
+            }*/
+        
+            $oAuth2Client = $FBObject->getOAuth2Client();        
+            if(!$accessToken->isLongLived()){ 
+                // Cambiando un token de acceso de corta duración por uno de larga vida 
+                $accessToken = $oAuth2Client->getLongLivedAccesToken($accessToken);                  
+            } 
+         
+           
+            $response = $FBObject->get("/me?fields=id, first_name, last_name, email, gender, birthday, picture.type(large)", $accessToken);
+            $userData = $response->getGraphNode()->asArray();
+            $_SESSION['userData'] = $userData;
+            $_SESSION['access_token'] = (string) $accessToken;
+            
+            $fotoFB =  $_SESSION['userData']['picture']['url'];        
+            $id = $_SESSION['userData']['id'];
+            $nombre = eliminar_tildes($_SESSION['userData']['first_name']); 
+            $apellido = $_SESSION['userData']['last_name'];
+            $email = $_SESSION['userData']['email'];
+            $genero = $_SESSION['userData']['gender']; //cambiar male
+            $ubicacion = $_SESSION['userData']['user_location'] ;//ubicacion            
+            
+     
+            if($genero === "male") {
+                $genero = "chico";
+            } elseif ($genero == "") {    
+                $genero = "chico";
+            } else {
+                $genero = "chica";
+            }                
+            
+        
+            /* edad, objeto dentro de objeto + objeto extraigo la edad */
+            $objedad = $_SESSION['userData']['birthday'];            
+            $edaddecoded = json_decode(json_encode($objedad), true);
+            $stringEdad = $edaddecoded['date']; //string(26) "1984-01-13 00:00:00.000000" 
+            $anio = (int)substr($stringEdad, 0, 4);  // 1984
+            $mes = (int)substr($stringEdad, 5, 8);   // 01
+            $dia = (int)substr($stringEdad, 8, 11);  // 13
+            $fecha_nacimiento = $dia . '-' . $mes . '-' . $anio;
+            $dia_actual = date("Y-m-d");
+            $edad_diff = date_diff(date_create($fecha_nacimiento), date_create($dia_actual));       
+            $edad = intval($edad_diff->format('%y')); //convertimos a int            
+            /* *** */
+            //var_dump($edad);
+            //die();
+            
+            //ya tenemos sus datos           
+            //ahora habria que insertar los datos en la bd y luego logear al usuario automaticamente en la app
+            //habra que generarle una contraseña y guardarla tmbn en la bd de datos.
+            //header('Location: index.php'); aqui falla una vez logeado hay que redireccionarle al listado, mirar metodo del login de angel
+            //esto esta en index.php
+        
+            if(!isset($_SESSION['access_token'])){
+                header("Location: $URL_PATH/");
+                exit();
+            }
+        
+            // CREO EL USUARIO CON LOS DATOS DE FB
+            global $config;
+            global $URL_PATH;
+            $usuario = new UsuarioFace;
+            $usuario->login = $nombre.$apellido;            
+            $usuario->nombre = $nombre;
+            $usuario->apellidos = $apellido;
+            $usuario->email = $email;
+            $usuario->edad = $edad;                    
+            $usuario->rol_id = "1";
+            $usuario->rango_id = "0";
+            $usuario->hechizos = "3";
+            $usuario->genero = $genero;
+            $usuario->ubicacion = $ubicacion;
+/*             var_dump($usuario->ubicacion); una vez me den los permisos comprobamos que recoge ubicacion. */
+            
+            
+            $usuario->activada = "1"; //este no necesita activarse ya que viene x facebook. 
+            $usuario->sobreti = "";
+            $usuario->ubicacion = "";
+            $usuario->gustos = "";
+            $usuario->loquebuscas = "";
+            $usuario->aficiones = "";
+            //pass aleaorio
+            $coctel = '0123456789abcdefghijklmnopqrstuvwxyz';            
+            $passAleatorio = substr(str_shuffle($coctel), 0, 10); // ej: 54esmdr0qf
+            $usuario->password = password_hash($passAleatorio, PASSWORD_DEFAULT);
+        
+            // num validacion
+            $fecha = idate("U"); //fecha en formato int
+            $aleatorio = rand(2, 99); //aleatorio entre 0 y 99
+            $validacion = $fecha * $aleatorio;
+            $usuario->validacion = $validacion;
+        
+            // busco 
+            if($genero === "chico") {
+                $usuario->busco = "chica";
+            } else {
+                $usuario->busco = "chico";
+            }
+         
+            // foto                    
+            $nombreDfoto =  $usuario->login.".jpg";                    
+            $imagen = file_get_contents($fotoFB);      
+            if ($genero === "chico") {
+                file_put_contents("assets/fotosUsuarios/fotosChicos/" . $nombreDfoto , $imagen);
+            } else {
+                file_put_contents("assets/fotosUsuarios/fotosChicas/" . $nombreDfoto , $imagen);            
+            }
+            $usuario->foto_perfil = $nombreDfoto;
+            
+            /* FIN DE CREAR EL USUARIO */
+        
+        
+            // VERIFICAMOS CON LA BD
+            
+            $usuExiste = (new Orm)->comprobarUsuario($usuario); //si no existe false, si existe devuelve el objeto
+            
+            if($usuExiste) { //si existe le logeo 
+                setcookie("usuario", trim($usuExiste["email"]), time() + (60 * 60));
+                //setcookie("pass", trim($usuario->password), time() + (60 * 60)); //solo es una hora                
+                session_start();
+                $_SESSION['login'] = $usuExiste["login"];
+                $_SESSION['rol_id'] = $usuExiste["rol"];
+                $_SESSION['fotoPerfil'] = $usuExiste["foto"];
+                $_SESSION['genero'] = $usuExiste["genero"];                
+                header("Location: $URL_PATH/listado");
+                exit();
+                  
+            } else { //NO existe le añado a BD y le logeo                               
+                $insert = (new Orm)->insertarUsuarioFB($usuario, $validacion);
+                setcookie("usuario", trim($usuExiste["email"]), time() + (60 * 60));
+                //setcookie("pass", trim($usuario->password), time() + (60 * 60)); //solo es una hora                
+                session_start();
+                $_SESSION['login'] = $usuario->login;
+                $_SESSION['rol_id'] = $usuario->rol_id;
+                $_SESSION['fotoPerfil'] = $usuario->foto_perfil;
+                $_SESSION['genero'] = $usuario->genero;               
+                header("Location: $URL_PATH/listado");
+                exit();
+                
+            } 
+        
+     
+    }
 
 
     /* Hacemos pasarela de pago */
@@ -315,30 +480,40 @@ class UserController extends Controller
 
     public function hechizosFormu($login) {
         global $URL_PATH;     
-        $arrcompletada = (new Orm)->checkSiInvitCompletada($login);            
+        $arrcompletada = (new Orm)->checkSiInvitCompletada($login); 
+        $hechizos = $_SESSION['hechizos'] ;      
         $completada = $arrcompletada["invitaciones"]; //saco el valor del array          
         if(!$arrcompletada) { // null = primera vez que entra; se crea el registro
             //echo "null es la primera vez que entra el usuario, ahora lo inserto y le pongo valor 0";           
             $invitaciones = 0;        
             (new Orm)->insertUser1vezHechizos($login,$invitaciones);            
-            echo Ti::render("view/hechizos/hechizosView.phtml", compact('login'));
+            echo Ti::render("view/hechizos/hechizosView.phtml", compact('login','hechizos'));
         } elseif ($completada == 0) { // si es 0 = formulario incompleto
             //echo "valor 0, incompleto, mostrar formulario";
-            $hechizos = $_SESSION['hechizos'];            
-            echo Ti::render("view/hechizos/hechizosView.phtml", compact('login')); 
+            /* $hechizos = $_SESSION['hechizos'];   ANGEL HE TOCADO ESTO!! Y LO HE DEJADO EN COMENTARIO*/          
+            echo Ti::render("view/hechizos/hechizosView.phtml", compact('login','hechizos'));
         } else { // si es 1 = completado
-            echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login')); 
+            echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login','hechizos')); 
         }    
     }
     
     public function hechizosFormuPost(){
+         
         global $URL_PATH;
-        $arrEmailHechizos = $_REQUEST['arrayx'] ?? "";       
-        $updateEmails = implode(",", $arrEmailHechizos);
+        global $config; 
+        error_reporting(E_ALL ^ E_NOTICE); 
         $login = $_SESSION['login'];
+        $hechizosArray = (new Orm)->contadorHechizos($login);
+        $hechizos = $hechizosArray["hechizos"];        
+        (new Orm)->updateHexizx($hechizos,$login);    
+        //ahora enviamos los mails
+        $arrEmailHechizos = $_REQUEST['arrayx'] ?? "";         
+        $updateEmails = implode(",", $arrEmailHechizos);        
         $invitaciones = 1; 
-        (new Orm)->insertMailsUsuario($login,$updateEmails,$invitaciones);       
-        echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login'));   
+        (new Orm)->insertMailsUsuario($login,$updateEmails,$invitaciones); 
+        $array = $arrEmailHechizos;//esta variable se inyecta en el include
+        include('emailcfg/enviar-hexizosMail.php');       
+        echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login')); 
     }
 
 

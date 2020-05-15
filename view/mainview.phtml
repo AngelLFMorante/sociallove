@@ -5,7 +5,7 @@ global $login_url;
 /*facebookk*/
 require_once('configfb.php');
 $redirectTo = "http://localhost/sociallove/callbackphp"; //mandamos la peticion y a la vuelta va a este php
-$dataFb = ['email'];
+$dataFb = ['email', 'user_birthday','user_gender','user_hometown','user_location']; //permissions
 $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y el email en fullURL
 /*facebookk*/
 
@@ -13,7 +13,6 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
 \dawfony\Ti::endExtend();
 
 ?>
-
 <body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
     background-repeat: repeat;
     background-color: #fbf6f9;">
@@ -189,7 +188,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                                 <a href="" class="btn btn-block mb-4 btn-social style-font btn btn-block mb-4 btn-flickr" id="fbook" data-toggle="modal" data-target="#modalContactForm"><img class="img-logo-inscripcion" src="<?= $URL_PATH ?>/assets/fotosInterfaces/logoIns.png" alt="socialLoveLogo">
                                     ME INSCRIBO</a>
                             </div>
-                            <a href="<?= $login_url ?>" class="btn btn-block mb-4 btn-social btn-facebook style-font" id="fbook">
+                            <a href="<?= $fullURL ?>" class="btn btn-block mb-4 btn-social btn-facebook style-font" id="fbook">
                                 <i class="fa fa-facebook"></i> Conexión vía Facebook </a>
 
                         </div>

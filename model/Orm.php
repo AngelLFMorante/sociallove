@@ -99,9 +99,15 @@ class Orm
     function insertarUsuario($usuario, $validacion)
     {
         $bd = Klasto::getInstance();
-        $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, sobreti, gustos, loquebuscas, aficiones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto, $validacion, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficiones]);
+        $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, activada, sobreti, gustos, loquebuscas, aficiones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?)";
+        $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto, $validacion, $usuario->activada, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficiones]);
     }
+    function insertarUsuarioFB($usuario, $validacion)
+    {
+        $bd = Klasto::getInstance();
+        $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, activada, sobreti, gustos, loquebuscas, aficiones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto_perfil, $validacion, $usuario->activada, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficiones]);
+    }  
     function obtenerNumValidacion($email)
     {
         $bd = Klasto::getInstance();
@@ -182,6 +188,15 @@ class Orm
         $sql = "UPDATE emailhechizos set emails = ?, invitaciones = ? where login = ?";       
         $bd->execute($sql, [$updateEmails,$invitaciones,$login]);
     }
+    public function updateHexizx($hechizos,$login)
+    {
+       $bd = Klasto::getInstance();  
+       $sql = "UPDATE usuario set hechizos = ?+5 where login = ?";       
+       $bd->execute($sql, [$hechizos,$login]);
+        //UPDATE usuario set hechizos = 3+5 where login = 'aaalola'
+    }
+
+
 
 
     /* ********* */

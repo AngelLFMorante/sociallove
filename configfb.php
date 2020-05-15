@@ -6,8 +6,8 @@ if(!isset($_SESSION))
 require_once('Facebook/autoload.php');
 
 $FBObject = new \Facebook\Facebook([
-	'app_id' => '630181460866748',
-	'app_secret' => 'c8b4d2048fb4ee5bc2cec47611f76bc2',
+	'app_id' => '565161470795223',
+	'app_secret' => '0aa9c178b4196097f8ea5fce5b51debe',
 	'default_graph_version' => 'v2.7'
 ]);
 

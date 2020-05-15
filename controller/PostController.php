@@ -66,6 +66,7 @@ class PostController extends Controller
         $login = $_SESSION["login"];
         $sacarLista = (new Orm)->listadoSesionIni($pagina,$login);
         $hechizos = (new Orm)->contadorHechizos($login);
+        $_SESSION['hechizos'] = $hechizos;
         /* Para paginación */
         $cuenta = (new Orm)->contadorPersonas($login);
         $numpaginas = ceil ($cuenta->cantidadPersonas / $config["post_per_page"]);
@@ -94,8 +95,7 @@ class PostController extends Controller
         $cuenta = (new Orm)->contarPersonasBusqueda($busco,$busqueda);/* sacamos el total de las personas que coincidan con esa busqueda */
         $numpaginas = ceil ($cuenta->personas / $config["post_per_page"]);
         $ruta = "$URL_PATH/busqueda/page/";
-        $hechizos = (new Orm)->contadorHechizos($login);
-
+        $hechizos = $_SESSION['hechizos'];
         echo Ti::render("view/usuarios/busquedaUsuario.phtml", compact("sacarLista", "busco", "hechizos","cuenta", "numpaginas", "pagina", "ruta"));
     }
 
