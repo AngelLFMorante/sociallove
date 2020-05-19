@@ -14,3 +14,8 @@ function eliminar_tildes($cadena){
     
 }
 
+function limpia_espacios($cadena){
+    $cadena = str_replace(' ', '', $cadena);
+    return $cadena;
+  }
+

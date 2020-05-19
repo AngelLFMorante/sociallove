@@ -16,7 +16,7 @@ global $URL_PATH;
                     <div class="container-images-sesion container-fluid">
                         <img class="imagenes-genero-sesion" src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $sacarListBusqueda->genero?>s/<?= $sacarListBusqueda->foto ?>" alt="no_foto">
                         <!-- crear ruta para que nos lleve al perfil del usuario clickeado con su login-->
-                        <a href="<?= $URL_PATH ?>/perfilUsuario/<?= $sacarListBusqueda->login ?>">
+                        <a href="<?= $URL_PATH ?>/perfil/<?= $sacarListBusqueda->login ?>">
                             <div class="middle">
                                 <div class="text style-font">
                                     <b><?= $sacarListBusqueda->login ?></b><br><?= $sacarListBusqueda->edad ?> años<br> <?= $sacarListBusqueda->ubicacion ?>

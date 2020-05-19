@@ -55,6 +55,8 @@ Macaw::get($URL_PATH . '/activate/(:num)/(:any)', "controller\UserController@cue
 //facebook login		
 Macaw::get($URL_PATH . '/callbackphp', "controller\UserController@callbackphp");		
 //Macaw::get($URL_PATH . '/#_=_', "controller\UserController@procesarLogin");
+Macaw::get($URL_PATH . '/cambiapassFB', "controller\UserController@cambiapassFBphp");
+Macaw::post($URL_PATH . '/cambioPassFBpost', "controller\UserController@cambiapassFinFBphp");
 
 
 

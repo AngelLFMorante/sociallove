@@ -39,6 +39,8 @@ class UserController extends Controller
                 $_SESSION['rol_id'] = $hashpass["rol"];
                 $_SESSION['fotoPerfil'] = $hashpass["foto"];
                 $_SESSION['genero'] = $hashpass["genero"];
+                $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($_SESSION["login"]);
+                $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];
                 header("Location: $URL_PATH/listado");
             } else {
                 setcookie("usuario", "", time() - (60 * 60));
@@ -90,7 +92,7 @@ class UserController extends Controller
         $usuario = new Usuario;
         $error = true;
 
-        $usuario->login = sanitizar($_POST["login"] ?? ""); //name="login"
+        $usuario->login = sanitizar(limpia_espacios($_POST["login"] ?? "")); //name="login"
         $usuario->password = password_hash($_REQUEST["password"], PASSWORD_DEFAULT);
         $repPassword =  sanitizar($_REQUEST["repassword"]);    //name="repassword" /* Esta variable no hace nada */
         $usuario->sobreti = sanitizar($_REQUEST["sobreti"] ?? "");   //textarea sobreti
@@ -367,6 +369,12 @@ class UserController extends Controller
             $_SESSION['rol_id'] = $usuario->rol_id;
             $_SESSION['fotoPerfil'] = $usuario->foto_perfil;
             $_SESSION['genero'] = $usuario->genero;
+            
+            $login = $usuario->login;
+            $activador = 1;
+            (new Orm)->debeCambiarLaClave($login,$activador); //cambie tu clave ponemos el campo en 1
+            
+            
             header("Location: $URL_PATH/listado");
             exit();
         }
@@ -514,6 +522,28 @@ class UserController extends Controller
         include('emailcfg/enviar-hexizosMail.php');
         echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login'));
     }
+
+    public function cambiapassFBphp(){
+        global $URL_PATH;
+        global $config; 
+        $login = $_SESSION['login'];
+        /* var_dump($_SESSION);
+        die(); */
+        $fotoPerfil = $_SESSION['fotoPerfil'];//
+        echo Ti::render("view/usuarioFB/cambiopassFB.phtml", compact('login','fotoPerfil'));
+    }
+
+    public function cambiapassFinFBphp() {
+        global $URL_PATH;
+        $newPass = $_REQUEST["password"] ?? "";
+        $login = $_SESSION['login'];
+        $newPassHash = password_hash($newPass, PASSWORD_DEFAULT); //encriptamos la pass
+        (new Orm)->cambioPasswordFace($newPassHash,$login);//cambio clave
+        $activador = 0;
+        (new Orm)->debeCambiarLaClave($login,$activador); //aqui lo pongo a 0 desactivo el aviso
+        header("Location: $URL_PATH/listado");
+    }
+
 
 
     /* **Carlos** */

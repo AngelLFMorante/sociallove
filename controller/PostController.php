@@ -79,8 +79,10 @@ class PostController extends Controller
         
         $numpaginas = ceil ($cuenta->cantidadPersonas / $config["post_per_page"]);
         $ruta = "$URL_PATH/listado/page/"; 
-        
-        echo Ti::render("view/principal.phtml", compact("sacarLista","hechizos","cuenta", "numpaginas", "pagina", "ruta")); 
+        /*alber --> lo inyecto en el render para mostrar la alerta mediante unn activador*/
+        $cambiopass = (new Orm)->checkCambioPass($login); //0 cambiado //  1 cambiar
+
+        echo Ti::render("view/principal.phtml", compact("sacarLista","hechizos","cuenta", "numpaginas", "pagina", "ruta", "cambiopass")); 
 
     }
 

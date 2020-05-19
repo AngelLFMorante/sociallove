@@ -125,7 +125,30 @@ class Orm
         $bd = Klasto::getInstance();
         $sql = "INSERT INTO usuario (login, password, email, nombre, apellidos, edad, hechizos, genero, busco, ubicacion, rol_id, rango_id, foto_perfil, validacion, activada, sobreti, gustos, loquebuscas, aficiones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $bd->execute($sql, [$usuario->login, $usuario->password, $usuario->email, $usuario->nombre, $usuario->apellidos, $usuario->edad, $usuario->hechizos, $usuario->genero, $usuario->busco, $usuario->ubicacion, $usuario->rol_id, $usuario->rango_id, $usuario->foto_perfil, $validacion, $usuario->activada, $usuario->sobreti, $usuario->gustos, $usuario->loquebuscas, $usuario->aficiones]);
-    }  
+    }
+    public function debeCambiarLaClave($login,$activador)
+    {
+        $bd = Klasto::getInstance();
+        $sql = "UPDATE usuario set cambiopass = ? where login = ?"; 
+        $bd->execute($sql, [$activador,$login]);
+    }
+    public function checkCambioPass($login)
+    {
+        $bd = Klasto::getInstance();
+        $sql = "SELECT cambiopass FROM usuario WHERE login = ?";
+        $dato = $bd->queryOne($sql, [$login]);
+        if($dato === null){return 0;}
+        return $dato["cambiopass"];
+    }
+    
+    public function cambioPasswordFace($newPassHash,$login)
+    {
+        return Klasto::getInstance()->execute(
+            "UPDATE usuario SET password=? WHERE login = ?",
+            [$newPassHash,$login]
+        );
+    }
+
     function obtenerNumValidacion($email)
     {
         $bd = Klasto::getInstance();

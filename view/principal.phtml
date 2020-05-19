@@ -18,7 +18,7 @@ global $URL_PATH;
                 <!-- Redireccionar para meter emails y consiga 10 hechizos -->
             </div>
         </a>
-        <div class="container fondo-personas">
+        <div class="container fondo-personas" <?php if ($cambiopass == 1):?>  onmouseover="modalcambiopass();" <?php endif;?> >
             <div class="grid-container-sesion container-fluid">
                 <!-- ********************** Fotos de personas (chicas) imaginarias para hacer al usuario que se registre ******************************************* -->
                 <?php foreach ($sacarLista as $sacarListaSesion) :  ?>
