@@ -117,7 +117,12 @@ class UserController extends Controller
         //echo '<div>Has seleccionado: '.$selected.'</div>'; //los que ha seleccionado
         $usuario->busco = $_REQUEST["busco"];
         //foto del usuario
-        $usuario->foto = $_FILES["foto"]["name"];
+        $nombreFoto = $_FILES["foto"]["name"];
+        if (strlen ($nombreFoto) > 30) {
+            $usuario->foto = substr("$nombreFoto", 0, 31);
+            $extension = substr($_FILES["foto"]["type"], 6);
+            $usuario->foto = "$usuario->foto.$extension";
+        }
 
 
         //comprobacion del tamaño, y la extension en php      //var_dump($usuario->foto);//var_dump($_FILES["foto"]["size"]);
