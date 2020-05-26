@@ -2,4 +2,5 @@ vendor/
 config.ini
 assets/
 private/
+configfb.php
 
