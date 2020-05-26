@@ -7,5 +7,6 @@ class Post{
      public $fecha;
      public $usuarioEnviado;
      public $usuarioRecibido;
+     public $usuarioNotificado;
 
 }

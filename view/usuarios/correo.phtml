@@ -12,6 +12,10 @@ global $login_url;
      \dawfony\Ti::extend("view/cabeceras/perfilView.phtml");
     \dawfony\Ti::endExtend();
     ?>
+    <?php if($_SESSION['notificacionesCorreo'] > 0) :?>
+        <script src="<?= $URL_PATH ?>/js/BorrarNotificacionMensaje.js"></script>
+    <?php endif; ?>
+
     <div class="container fondo-personas">
     <div id="comentarios">
         <h4>Comentarios:</h4>

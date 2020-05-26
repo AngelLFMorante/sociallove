@@ -20,17 +20,18 @@ global $login_url;
                         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                             <ul class="mr-auto mt-2 mt-lg-0 navbar-nav sesion">
                                 <li class="nav-item ">
-                                    <a class="nav-link" href="<?= $URL_PATH ?>/correo"><i class="fas fa-envelope"></i></a>
-                                    <span>
-                                        <!-- AQUI VA EL NUMERO DE NOTIFIACIONES RECIBIDAS, FONDO ROJO,NUMERO EN BLANCO,CON ANIMACION DE PARPADEO UNA VEZ ABIERTO DESAPARECE. --></span>
+                                    <a class="nav-link" href="<?= $URL_PATH ?>/correo" onclick=""><i class="fas fa-envelope"></i></a>
+                                    <?php if ($_SESSION['notificacionesCorreo'] > 0) : ?>
+                                            <span id="NotifyMail" class="num-notificaciones-correo"></span>
+                                            <?php endif; ?>
                                 </li>
                                 &nbsp;
                                 <li class="nav-item">
                                     <!-- falta hacer las notificaciones como el carrito compra que salga abajo si hay gente que te ha visitado -->
                                     <div class="header-mini-cart  pull-left open" id="formCompra">
-                                        <span class="nav-link dropdown-toggle" height="70px" width="70px" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="verNotificaciones()"><i class="fas fa-bell"></i></span>
+                                        <span class="nav-link dropdown-toggle" height="70px" width="70px" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i></span>
                                         <?php if ($_SESSION['notificaciones'] > 0) : ?>
-                                            <span class="num-notificaciones"><?= $_SESSION['notificaciones'] ?></span>
+                                            <span class="num-notificaciones"></span>
                                             <?php endif; ?>
                                         <div class="dropdown-menu shopping-cart-content pull-right notificaciones">
                                             <div class="shopping-cart-items">
@@ -67,7 +68,7 @@ global $login_url;
                                                     <td><i class="fa fa-user"></i>&nbsp;&nbsp;Hola <?= $_SESSION["login"] ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><a class="perfil-enlace" href="<?= $URL_PATH ?>/zonavip"><i class="fas fa-magic"></i>&nbsp;&nbsp;Tienes <b style="color:pink"><?= $hechizos["hechizos"] ?></b> hechizos</a></td>
+                                                    <td><a class="perfil-enlace" href="<?= $URL_PATH ?>/zonavip"><i class="fas fa-magic"></i>&nbsp;&nbsp;Tienes <b style="color:pink" id="numHechizos"><?= $hechizos["hechizos"] ?></b> hechizos</a></td>
                                                 </tr>
                                                 <tr>
                                                     <td><i class="fas fa-star"></i><a class="perfil-enlace" href="<?= $URL_PATH ?>/perfil/<?= $_SESSION["login"] ?>">&nbsp;&nbsp;Ver Perfil</a></td>

@@ -133,6 +133,7 @@ class PostController extends Controller
 
     public function Comentar($usuario){
         $loginUsu = $usuario;
+        $hechizos = $_SESSION["hechizos"];
         echo Ti::render("view/usuarios/enviarComentario.phtml", compact('loginUsu'));
     }
 
@@ -142,16 +143,16 @@ class PostController extends Controller
 
         $comentario = new Post;
         $comentario ->fecha = date('Y-m-d H:i:s');
-        $comentario ->texto = sanitizar(strip_tags($_REQUEST["texto"]));
+        $comentario ->texto = sanitizar(strip_tags(str_replace("<p>", " ",$_REQUEST["texto"])));
         $comentario ->usuarioEnviado = $_REQUEST['usuarioHaceEnvio'];
         $comentario ->usuarioRecibido = $usuario;
+        $comentario ->usuarioNotificado = 'no';
         (new OrmPerfil) ->insertarComentario($comentario);
         header("Location: " . $URL_PATH . "/correo");  
     } 
 
     public function deleteComent($id){
         global $URL_PATH;
-        var_dump($id);
         (new OrmPerfil)-> eliminarComentario($id);
         header("Location: " . $URL_PATH . "/correo");   
     }

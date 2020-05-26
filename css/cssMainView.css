@@ -580,6 +580,7 @@ h6{
     display: inline-block;
     height: 60px;
 }
+
 /* Carlos */
 
 .contenedor-perfil {
@@ -627,7 +628,6 @@ h6{
     height: 275px;
     position: absolute;
     text-align: center;
-
     max-width: 850px;
     margin: 0 auto;
     width: 840px;
@@ -639,42 +639,30 @@ h6{
 
 .parent {
     display: grid;
-    grid-template-columns: 1fr 3fr;
-    grid-template-rows: repeat(3, 1fr);
-    grid-column-gap: 0px;
+    grid-template-areas:
+    'lado centro centro centro centro'
+    'lado centro centro centro centro'
+    'lado centro centro centro centro';
+    grid-column-gap: 20%;
     grid-row-gap: 0px;
     padding: 30px;
 }
-.parent > div > h1 {
-    color:black;;
+
+.parent>div>h1 {
+    color: black;
 }
 
 .div1 {
-    grid-area: 1 / 1 / 2 / 2;
+    grid-area: lado;
 }
 
 .div2 {
-    grid-area: 2 / 1 / 3 / 2;
+    grid-area: centro;
 }
 
 .div3 {
-    grid-area: 3 / 1 / 4 / 2;
+    grid-area: footer;
     text-align: center;
-}
-
-.div4 {
-    grid-area: 1 / 2 / 2 / 3;
-    padding-left: 10%;
-}
-
-.div5 {
-    grid-area: 2 / 2 / 3 / 3;
-    padding-left: 10%;
-}
-
-.div6 {
-    grid-area: 3 / 2 / 4 / 3;
-    padding-left: 10%;
 }
 
 .detalles {
@@ -710,9 +698,11 @@ h6{
 }
 
 #map {
-    height: 220px;  /* The height is 400 pixels */
-    width: 220px;  /* The width is the width of the web page */
-   }
+    height: 220px;
+    /* The height is 400 pixels */
+    width: 220px;
+    /* The width is the width of the web page */
+}
 
 .hechizo {
     position: relative;
@@ -720,26 +710,32 @@ h6{
     background-color: #f40083;
     color: #fff;
 }
+
 .nohechizo {
     position: relative;
     left: 50%;
-    background-color:red;
+    background-color: red;
     color: #fff;
+    display: none;
 }
-.linkenblanco{
+
+.linkenblanco {
     text-decoration: none;
     color: #fff;
 }
+
 .linkenblanco:hover {
     text-decoration: none;
     color: #fff;
 }
+
 .cabecera-detalles {
     text-align: center;
     font-family: 'Times New Roman', Times, serif;
     font-style: italic;
     text-transform: uppercase;
 }
+
 .detalles-perfil {
     text-transform: uppercase;
     vertical-align: baseline;
@@ -749,12 +745,15 @@ h6{
     color: gray;
     font-weight: bold;
 }
+
 .detalles-perfil:hover {
     color: #f40083;
 }
-div > p {
+
+div>p {
     color: black;
 }
+
 .descripcion:hover {
     color: #f40083;
     cursor: pointer;
@@ -767,16 +766,32 @@ div > p {
     border: 1px solid #f40083;
     background-color: red;
     color: white;
+    position: absolute;
+    top: 30px;
+    left: 79px;
+}
+.num-notificaciones-correo {
+    width: 10px;
+    height: 10px;
+    border-radius: 100px;
+    border: 1px solid #f40083;
+    background-color: red;
+    color: white;
+    position: absolute;
+    top: 30px;
+    left: 40px;
 }
 
 .boton-chat {
     position: relative;
     left: 20%;
-    top:45%;
+    top: 45%;
     background-color: #f40083;
     color: #fff;
 }
+
 /* correo */
+
 #comentarios {
     width: 100%;
     height: 100%;
@@ -788,12 +803,10 @@ a {
 
 #coment-icon {
     color: pink;
-
 }
 
 #trash-icon {
     color: red;
-
 }
 
 .btn-dos {
@@ -815,7 +828,8 @@ a {
 #send:hover {
     cursor: pointer;
 }
-#send{
+
+#send {
     display: flex;
     align-self: center;
 }
@@ -823,13 +837,68 @@ a {
 #textoArea {
     resize: none;
 }
+
 #formuComen {
     display: flex;
     justify-content: flex-end;
 }
+
 #botonSend {
     display: flex;
     justify-content: center;
     align-self: center;
+}
+
+.grid-container-perfil {
+    display: grid;
+    grid-gap: 3px;
+    grid-template-columns: auto auto;
+    padding: 1px;
+}
+.imagenes-genero-perfil{
+    opacity: 1;
+    display: block;
+    transition: .5s ease;
+    backface-visibility: hidden;
+    width: 120px;
+    height: 110px;
+}
+
+.textDescripcion {
+    height: 100%;
+       width: 100%;
+      -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+       -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+       box-sizing: border-box;  
+}
+
+.divDesc {
+    height: 200px;
+    width: 300px;
+    background: red;
+}
+
+.registroArreglo {
+    display: flex;
+    justify-content: center;
+}
+
+.gustos1 {
+    display: flex;
+    justify-content: center;
+    align-self: flex-end;
+}
+
+.signoZodiaco > div{
+    display: inline-block;
+}
+
+.cajaDescripcion {
+    width: 550px;
+    height: 100px;
+}
+
+.oculto {
+    display: none;
 }
 

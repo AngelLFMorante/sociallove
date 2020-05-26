@@ -40,7 +40,9 @@ class UserController extends Controller
                 $_SESSION['fotoPerfil'] = $hashpass["foto"];
                 $_SESSION['genero'] = $hashpass["genero"];
                 $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($_SESSION["login"]);
+                $numeroNotificacionesCorreo = (new OrmPerfil)->contarNotificacionesCorreo($_SESSION["login"]);
                 $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];
+                $_SESSION['notificacionesCorreo'] = $numeroNotificacionesCorreo['cuenta'];
                 header("Location: $URL_PATH/listado");
             } else {
                 setcookie("usuario", "", time() - (60 * 60));
@@ -50,7 +52,9 @@ class UserController extends Controller
                 $_SESSION['fotoPerfil'] = $hashpass["foto"];
                 $_SESSION['genero'] = $hashpass["genero"];
                 $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($_SESSION["login"]);
+                $numeroNotificacionesCorreo = (new OrmPerfil)->contarNotificacionesCorreo($_SESSION["login"]);
                 $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];
+                $_SESSION['notificacionesCorreo'] = $numeroNotificacionesCorreo['cuenta'];
                 header("Location: $URL_PATH/listado");
             }
         }
@@ -96,23 +100,7 @@ class UserController extends Controller
         $usuario->password = password_hash($_REQUEST["password"], PASSWORD_DEFAULT);
         $repPassword =  sanitizar($_REQUEST["repassword"]);    //name="repassword" /* Esta variable no hace nada */
         $usuario->sobreti = sanitizar($_REQUEST["sobreti"] ?? "");   //textarea sobreti
-        /*CHECKBOX GUSTOS*/
-        if (is_array($_POST['gustos'] ?? "")) {
-            $selected = '';
-            $num_gustos = count($_POST['gustos']);
-            $current = 0;
-            foreach ($_POST['gustos'] as $key => $value) {
-                if ($current != $num_gustos - 1)
-                    $selected .= $value . ', ';
-                else
-                    $selected .= $value . '.';
-                $current++;
-            }
-        } else {
-            $selected = "";
-        }
         //echo '<div>Has seleccionado: '.$selected.'</div>'; //los que ha seleccionado
-        $usuario->gustos = $selected;
         $usuario->nombre = sanitizar($_REQUEST["nombre"] ?? "");
         $usuario->apellidos = sanitizar($_REQUEST["apellidos"] ?? "");
         $usuario->edad = sanitizar($_REQUEST["edad"]);
@@ -126,24 +114,7 @@ class UserController extends Controller
         $usuario->rango_id = "0";
         $usuario->hechizos = "3";
         $usuario->activada = "0";
-
-        /*CHECKBOX AFICIONES*/
-        if (is_array($_POST['aficiones'] ?? "")) {
-            $selectedaf = '';
-            $num_af = count($_POST['aficiones']);
-            $currentaf = 0;
-            foreach ($_POST['aficiones'] as $key => $v) {
-                if ($currentaf != $num_af - 1)
-                    $selectedaf .= $v . ', ';
-                else
-                    $selectedaf .= $v . '.';
-                $currentaf++;
-            }
-        } else {
-            $selectedaf = "";
-        }
         //echo '<div>Has seleccionado: '.$selected.'</div>'; //los que ha seleccionado
-        $usuario->aficiones = $selectedaf;
         $usuario->busco = $_REQUEST["busco"];
         //foto del usuario
         $usuario->foto = $_FILES["foto"]["name"];
@@ -177,6 +148,7 @@ class UserController extends Controller
             $validacion = $fecha * $aleatorio;
 
             $insert = (new Orm)->insertarUsuario($usuario, $validacion);/* Esa variable tampoco hace nada */
+            (new OrmPerfil)->insertarDetalles($usuario->login); //Crea un login en la tabla detalles para su posterior modificacion de los detalles
             $emaildestino = "$usuario->email"; //falta cambiarlo por  $usuario->email
             $data = ["email" => $emaildestino];
             $token = $validacion;
@@ -243,8 +215,10 @@ class UserController extends Controller
         }
 
 
-        $response = $FBObject->get("/me?fields=id, first_name, last_name, email, gender, birthday, picture.type(large)", $accessToken);
+        $response = $FBObject->get("/me?fields=id, first_name, last_name, email, gender, birthday, location, picture.type(large)", $accessToken);
+
         $userData = $response->getGraphNode()->asArray();
+
         $_SESSION['userData'] = $userData;
         $_SESSION['access_token'] = (string) $accessToken;
 
@@ -254,8 +228,8 @@ class UserController extends Controller
         $apellido = $_SESSION['userData']['last_name'];
         $email = $_SESSION['userData']['email'];
         $genero = $_SESSION['userData']['gender']; //cambiar male
-        $ubicacion = $_SESSION['userData']['user_location']; //ubicacion
-                 
+        $ubicacion = $_SESSION['userData']['location']['name']; //ubicacion
+
 
 
         if ($genero === "male") {
@@ -306,17 +280,15 @@ class UserController extends Controller
         $usuario->rango_id = "0";
         $usuario->hechizos = "3";
         $usuario->genero = $genero;
+        
         $usuario->ubicacion = $ubicacion;
-        /*             var_dump($usuario->ubicacion); una vez me den los permisos comprobamos que recoge ubicacion. */
+
         $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($usuario->login);
-        $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];   
+        $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];
 
         $usuario->activada = "1"; //este no necesita activarse ya que viene x facebook. 
         $usuario->sobreti = "";
-        $usuario->ubicacion = "";
-        $usuario->gustos = "";
         $usuario->loquebuscas = "";
-        $usuario->aficiones = "";
         //pass aleaorio
         $coctel = '0123456789abcdefghijklmnopqrstuvwxyz';
         $passAleatorio = substr(str_shuffle($coctel), 0, 10); // ej: 54esmdr0qf
@@ -351,7 +323,7 @@ class UserController extends Controller
         // VERIFICAMOS CON LA BD
 
         $usuExiste = (new Orm)->comprobarUsuario($usuario); //si no existe false, si existe devuelve el objeto
-
+         
         if ($usuExiste) { //si existe le logeo 
             setcookie("usuario", trim($usuExiste["email"]), time() + (60 * 60));
             //setcookie("pass", trim($usuario->password), time() + (60 * 60)); //solo es una hora                
@@ -359,22 +331,31 @@ class UserController extends Controller
             $_SESSION['rol_id'] = $usuExiste["rol"];
             $_SESSION['fotoPerfil'] = $usuExiste["foto"];
             $_SESSION['genero'] = $usuExiste["genero"];
+            $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($_SESSION["login"]);
+            $numeroNotificacionesCorreo = (new OrmPerfil)->contarNotificacionesCorreo($_SESSION["login"]);
+            $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];
+            $_SESSION['notificacionesCorreo'] = $numeroNotificacionesCorreo['cuenta'];
             header("Location: $URL_PATH/listado");
             exit();
         } else { //NO existe le añado a BD y le logeo                               
             $insert = (new Orm)->insertarUsuarioFB($usuario, $validacion);
+
+            (new OrmPerfil)->insertarDetalles($usuario->login);
             setcookie("usuario", trim($usuExiste["email"]), time() + (60 * 60));
             //setcookie("pass", trim($usuario->password), time() + (60 * 60)); //solo es una hora                
             $_SESSION['login'] = $usuario->login;
             $_SESSION['rol_id'] = $usuario->rol_id;
             $_SESSION['fotoPerfil'] = $usuario->foto_perfil;
             $_SESSION['genero'] = $usuario->genero;
-            
+            $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($_SESSION["login"]);
+            $numeroNotificacionesCorreo = (new OrmPerfil)->contarNotificacionesCorreo($_SESSION["login"]);
+            $_SESSION['notificaciones'] = $numeroNotificaciones['cuenta'];
+            $_SESSION['notificacionesCorreo'] = $numeroNotificacionesCorreo['cuenta'];
             $login = $usuario->login;
             $activador = 1;
-            (new Orm)->debeCambiarLaClave($login,$activador); //cambie tu clave ponemos el campo en 1
-            
-            
+            (new Orm)->debeCambiarLaClave($login, $activador); //cambie tu clave ponemos el campo en 1
+
+
             header("Location: $URL_PATH/listado");
             exit();
         }
@@ -523,24 +504,26 @@ class UserController extends Controller
         echo Ti::render("view/hechizos/hechizosViewCompleto.phtml", compact('login'));
     }
 
-    public function cambiapassFBphp(){
+    public function cambiapassFBphp()
+    {
         global $URL_PATH;
-        global $config; 
+        global $config;
         $login = $_SESSION['login'];
         /* var_dump($_SESSION);
         die(); */
-        $fotoPerfil = $_SESSION['fotoPerfil'];//
-        echo Ti::render("view/usuarioFB/cambiopassFB.phtml", compact('login','fotoPerfil'));
+        $fotoPerfil = $_SESSION['fotoPerfil']; //
+        echo Ti::render("view/usuarioFB/cambiopassFB.phtml", compact('login', 'fotoPerfil'));
     }
 
-    public function cambiapassFinFBphp() {
+    public function cambiapassFinFBphp()
+    {
         global $URL_PATH;
         $newPass = $_REQUEST["password"] ?? "";
         $login = $_SESSION['login'];
         $newPassHash = password_hash($newPass, PASSWORD_DEFAULT); //encriptamos la pass
-        (new Orm)->cambioPasswordFace($newPassHash,$login);//cambio clave
+        (new Orm)->cambioPasswordFace($newPassHash, $login); //cambio clave
         $activador = 0;
-        (new Orm)->debeCambiarLaClave($login,$activador); //aqui lo pongo a 0 desactivo el aviso
+        (new Orm)->debeCambiarLaClave($login, $activador); //aqui lo pongo a 0 desactivo el aviso
         header("Location: $URL_PATH/listado");
     }
 
@@ -554,8 +537,45 @@ class UserController extends Controller
         $notificaciones = (new OrmPerfil)->notificaciones($_SESSION["login"]);
         $numeroNotificaciones = (new OrmPerfil)->contarNotificaciones($_SESSION["login"]);
         $perfil = (new OrmPerfil)->obtenerPerfil($login);
-        $perfil->hechizado = (new OrmPerfil)->leHaHechizado($login, $_SESSION["login"]);
-        echo Ti::render("view/usuarios/Perfil.phtml", compact("title", "hechizos", "perfil", "numeroNotificaciones"));
+        $detalles = (new OrmPerfil)->obtenerDetalles($login);
+        $perfil->hechizado = (new OrmPerfil)->leHaHechizado($login, $_SESSION["login"]); // (Hechizado, hechiza)
+        $sacarLista = (new UserController)->listaPerfil($_SESSION["login"]); //lista de usuarios que aparece en el perfil
+        $haHechizado = (new OrmPerfil)->leHaHechizado($_SESSION["login"], $login);  // para ver si has recibido un hechizo del perfil visitado
+        $botonMensaje = false;
+        if ($perfil->hechizado && $haHechizado) {
+            $botonMensaje = true;
+        }
+        echo Ti::render("view/usuarios/Perfil.phtml", compact("title", "hechizos", "perfil", "detalles", "numeroNotificaciones", "sacarLista", "botonMensaje"));
+    }
+
+    function listaPerfil($login)
+    {
+
+        $sacarListaUsuarios = (new OrmPerfil)->listadoPerfil($login);
+        $numeros = array();
+        $i = 0;
+
+        while ($i < 6) {
+
+            $num = rand(0, 23);
+
+            if (in_array($num, $numeros) === false) {
+                array_push($numeros, $num);
+                $i++;
+            }
+        }
+
+        for ($i = 0; $i < 6; $i++) {
+
+            $sacarListaPerfil[$i] = [
+                "fotos" => $sacarListaUsuarios[$numeros[$i]]->foto,
+                "login" => $sacarListaUsuarios[$numeros[$i]]->login,
+                "edad" => $sacarListaUsuarios[$numeros[$i]]->edad,
+                "genero" => $sacarListaUsuarios[$numeros[$i]]->genero,
+                "ubicacion" => $sacarListaUsuarios[$numeros[$i]]->ubicacion
+            ];
+        }
+        return $sacarListaPerfil;
     }
 
     public function borrarPerfil($login)
@@ -563,7 +583,6 @@ class UserController extends Controller
         global $URL_PATH;
         (new OrmPerfil)->borrarPerfil($login);
         header("Location: $URL_PATH/");
-
     }
 
     public function notificaciones()

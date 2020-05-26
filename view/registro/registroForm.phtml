@@ -48,7 +48,6 @@ global $login_url;
                                             <div class="col-sm-11">
                                                 <input type="password" name="password" class="form-control form-control-sm" id="password" placeholder="Mayusculas , Minusculas y Numeros..." onkeydown="plugPasswStreng()" autocomplete="new-password" required>
                                             </div>
-                                            <?//php var_dump($prepassword);?>
                                             <label for="repassword" class="col-form-label col-form-label-sm ml-3 style-font">Repite Contraseña <i class="fa fa-lock" style="font-size:20px"></i>&nbsp;&nbsp;<span id="checkrepass"></span></label>
                                             <div class="col-sm-11">
                                                 <input type="password" name="repassword" class="form-control form-control-sm" id="repassword" autocomplete="new-password" required>
@@ -58,58 +57,12 @@ global $login_url;
                                     </div>
                                     <hr>
 
-                                    <div class="row mx-auto">
+                                    <div class="row mx-auto registroArreglo">
                                         <div class="col-md-4 my-4 ">
                                             <label class="style-font">Sobre ti...<span id="count"></span></label>
                                             <textarea name="sobreti" id="textarea" rows="6" cols="35" maxlength="150" style="resize: none;" oninput="sendCounter()"> </textarea>
                                         </div>
 
-                                        <div class="col-md-1 mx-auto">
-                                            <br><label class="style-font">Gustos:</label>
-                                            <div class="checkbox"><span id="errg1"></span><br>
-
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="cine" id="cine" name="gustos[]" class="gustos1" onchange="" />
-                                                    <label for="cine">Cine</label><span></span>
-                                                </div>
-
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="tv" id="tv" name="gustos[]" class="gustos1" onchange="" />
-                                                    <label for="tv">Tele</label><span></span>
-                                                </div>
-
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="libros" id="libros" name="gustos[]" class="gustos1" onchange="" />
-                                                    <label for="libros">Libros</label><span></span>
-                                                </div>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="fiesta" id="fiesta" name="gustos[]" class="gustos1" onchange="" />
-                                                    <label for="fiesta">Fiesta</label><span></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 mt-2 ">
-                                            <br><br>
-                                            <div class="checkbox"><span id="errg2"></span><br>
-
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="musica" id="musica" name="gustos[]" class="gustos2" onchange="" />
-                                                    <label for="musica">Musica</label><span></span>
-                                                </div>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="animales" id="animales" name="gustos[]" class="gustos2" onchange="" />
-                                                    <label for="animales">Animales</label><span></span>
-                                                </div>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="tabaco" id="tabaco" name="gustos[]" class="gustos2" onchange="" />
-                                                    <label for="tabaco">Tabaco</label><span></span>
-                                                </div>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="viajes" id="viajes" name="gustos[]" class="gustos2" onchange="" />
-                                                    <label for="viajes">Viajes</label><span></span>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="col-md-4">
                                             <label for="nombre" class="ml-3 col-form-label col-form-label-sm style-font">Nombre</label>
                                             <div class="col-sm-11">
@@ -132,37 +85,12 @@ global $login_url;
 
                                     <hr>
 
-
-
-                                    <div class="row mx-auto">
+                                    <div class="row mx-auto registroArreglo">
                                         <div class="col-md-4 my-4">
                                             <label class="style-font">Lo que buscas.<span id="count2"></span></label>
                                             <textarea name="loquebuscas" id="loquebuscas" rows="8" cols="35" maxlength="150" style="resize: none;" oninput="sendCounter2()"> </textarea>
                                         </div>
-                                        <div class="col-md-3 ml-5">
-                                            <br><label class="style-font">Aficiones:</label><br>
-                                            <span id="errCheckboxes"></span>
-                                            <div class="checkbox">
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="deportes" id="deportes" name="aficiones[]" class="aficiones1" onchange="" />
-                                                    <label for="deportes">Deportes</label><span></span>
-                                                </div><br>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="cultura" id="cultura" name="aficiones[]" class="aficiones1" onchange="" />
-                                                    <label for="cultura">Cultura</label><span></span>
-                                                </div> <br>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="instrumentos" id="instrumentos" name="aficiones[]" class="aficiones1" onchange="" />
-                                                    <label for="instrumentos">Instrumentos</label><span></span>
-                                                </div><br>
-                                                <div class="chiller_cb">
-                                                    <input type="checkbox" value="otras" id="otras" name="aficiones[]" class="aficiones1" onchange="" />
-                                                    <label for="otras">Otras</label><span></span>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
+                                        
                                         <div class="col-md-4 ml-3">
                                             <br><label class="style-font">Preferencia de busquedas:</label><br>
                                             <span id="errbuscoid"></span>

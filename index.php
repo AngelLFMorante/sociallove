@@ -105,10 +105,27 @@ Macaw::get($URL_PATH . '/borrarPerfil/(:any)', "controller\UserController@borrar
 Macaw::get($URL_PATH . '/notificaciones', "controller\UserController@notificaciones");
 Macaw::get($URL_PATH . '/perfil/notificacion/(:any)', "controller\UserController@notificacionesPerfil");
 
+//Modificar perfil
+Macaw::post($URL_PATH . '/modificar/descripcion', "controller\ApiController@modificarDescripcion");
+Macaw::post($URL_PATH . '/modificar/loquebusco', "controller\ApiController@modificarLoQueBusco");
+Macaw::post($URL_PATH . '/modificar/relacion', "controller\ApiController@modificarRelacion");
+Macaw::post($URL_PATH . '/modificar/estilo', "controller\ApiController@modificarEstilo");
+Macaw::post($URL_PATH . '/modificar/signo', "controller\ApiController@modificarSigno");
+Macaw::post($URL_PATH . '/modificar/profesion', "controller\ApiController@modificarProfesion");
+Macaw::post($URL_PATH . '/modificar/alcohol', "controller\ApiController@modificarAlcohol");
+Macaw::post($URL_PATH . '/modificar/tabaco', "controller\ApiController@modificarTabaco");
+Macaw::post($URL_PATH . '/modificar/medidas', "controller\ApiController@modificarMedidas");
+Macaw::post($URL_PATH . '/modificar/transporte', "controller\ApiController@modificarTransporte");
+Macaw::post($URL_PATH . '/modificar/musica', "controller\ApiController@modificarMusica");
+Macaw::post($URL_PATH . '/modificar/deportes', "controller\ApiController@modificarDeportes");
+Macaw::post($URL_PATH . '/modificar/comida', "controller\ApiController@modificarComida");
+Macaw::post($URL_PATH . '/modificar/hobbies', "controller\ApiController@modificarHobbies");
+
 /* ******** */
 //pagina principal (AQUÍ TIENE QUE IR LA DIRECCIÓN DE CORREO)
 Macaw::get($URL_PATH . '/correo', "controller\PostController@correo");
 Macaw::get($URL_PATH . '/correolist/page/(:num)', "controller\PostController@correo");
+Macaw::get($URL_PATH . '/notifyCorreo', "controller\ApiController@notifyCorreo");
 //comentar
 Macaw::get($URL_PATH . '/comentar/(:any)', "controller\PostController@Comentar");
 //enviar comentario

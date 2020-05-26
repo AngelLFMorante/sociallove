@@ -1,7 +1,6 @@
 <?php
 // necesitamos la trayectoria de la URL para formar las rutas:
 global $URL_PATH;
-global $login_url;
 \dawfony\Ti::extend("view/cabeceras/headerView.phtml");
 \dawfony\Ti::endExtend();
 ?>
@@ -10,17 +9,18 @@ global $login_url;
 <body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
     background-repeat: repeat;
     background-color: #fbf6f9;">
-   <?php
-     \dawfony\Ti::extend("view/cabeceras/perfilView.phtml");
+    <?php
+    \dawfony\Ti::extend("view/cabeceras/perfilView.phtml");
     \dawfony\Ti::endExtend();
     ?>
+    <script src="<?= $URL_PATH ?>/js/alturaypeso.js"></script>
     <!-- Foto, nick, edad ... del perfil seleccionado -->
     <div class="contenedor-perfil">
         <img src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $perfil->genero ?>s/<?= $perfil->foto ?>" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     </div>
     <div class="contenedor-perfil-grande">
         <div class="contenedor-img-perfil-grande">
-            <img src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $perfil->genero ?>s/<?= $perfil->foto ?>" class="imagen-perfil-grande " href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $perfil->genero ?>s/<?= $perfil->foto ?>" class="imagen-perfil-grande " href="javascript:void(0)" data-toggle="modal" data-target="#modalFoto" aria-haspopup="true" aria-expanded="false">
         </div>
         <div class="perfil-data">
             <div>
@@ -37,8 +37,12 @@ global $login_url;
                 <?php if ($hechizos['hechizos'] < 1) : ?>
                     <h4 class="btn btn-sm <?= ($perfil->hechizado ? "nohechizo" : "hechizo") ?>" id="hechizar<?= $perfil->login ?>"><a href="<?= $URL_PATH ?>/zonavip" class="linkenblanco"><span id="textohechizo<?= $perfil->login ?>"><?= ($perfil->hechizado ? "Deshechizar" : "Hechizar") ?></span></a></h4>
                 <?php else : ?>
-                    <h4 class="btn btn-sm <?= ($perfil->hechizado ? "nohechizo" : "hechizo") ?>" id="hechizar<?= $perfil->login ?>" href="javascript:void(0)" onclick="hechizoClick('<?= $perfil->login ?>')"><span id="textohechizo<?= $perfil->login ?>"><?= ($perfil->hechizado ? "Deshechizar" : "Hechizar") ?></span></h4>
+                    <h4 type="hidden" class="btn btn-sm <?= ($perfil->hechizado ? "nohechizo" : "hechizo") ?>" id="hechizar<?= $perfil->login ?>" href="javascript:void(0)" onclick="hechizoClick('<?= $perfil->login ?>')"><span id="textohechizo<?= $perfil->login ?>"><?= ($perfil->hechizado ? "Deshechizar" : "Hechizar") ?></span></h4>
                 <?php endif; ?>
+                <?php if ($perfil->login != $_SESSION["login"] && $botonMensaje) : ?>
+                    <h4 class="btn btn-sm hechizo"><a href="<?= $URL_PATH ?>/comentar/<?= $perfil->login ?>" class="linkenblanco"><span>Enviar mensaje</span></a></h4>
+                <?php endif; ?>
+                <h4 id="botonComentar" class="btn btn-sm hechizo oculto"><a href="<?= $URL_PATH ?>/comentar/<?= $perfil->login ?>" class="linkenblanco"><span>Enviar mensaje</span></a></h4>
             </div>
         <?php else : ?>
             <h4 class="btn btn-sm boton-chat"><a href="http://localhost:3000/" class="linkenblanco" target="_blank"><span id="textohechizo">Ir a chat</span></a></h4>
@@ -47,95 +51,747 @@ global $login_url;
     <div class="container fondo-personas">
         <div class="grid-container-sesion container-fluid">
             <div class="parent">
-                <div>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d95777.52881590926!2d<?= $perfil->latitud ?>!3d<?= $perfil->longitud ?>!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xe3e0%3A0x0b0fb0d4f47660a!2s<?=$perfil->ubicacion?>!5e0!3m2!1ses!2ses!4v1589446158462!5m2!1ses!2ses" width="250" height="250" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                <div class="div1">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d95777.52881590926!2d<?= $perfil->latitud ?>!3d<?= $perfil->longitud ?>!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xe3e0%3A0x0b0fb0d4f47660a!2s<?= $perfil->ubicacion ?>!5e0!3m2!1ses!2ses!4v1589446158462!5m2!1ses!2ses" width="250" height="250" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+
+                    <h3 class="cabecera-detalles">Otros Usuarios</h3>
+                    <div class="grid-container-perfil container-fluid">
+                        <!-- ********************** Fotos de personas (chicas) imaginarias para hacer al usuario que se registre ******************************************* -->
+                        <?php foreach ($sacarLista as $sacarListaSesion) :  ?>
+                            <div class="container-images-sesion container-fluid">
+                                <img class="imagenes-genero-perfil" src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $sacarListaSesion["genero"] ?>s/<?= $sacarListaSesion["fotos"] ?>" alt="no_foto">
+                                <!-- crear ruta para que nos lleve al perfil del usuario clickeado con su login-->
+                                <a href="<?= $URL_PATH ?>/perfil/<?= $sacarListaSesion["login"] ?>">
+                                    <div class="middle">
+                                        <div class="text style-font">
+                                            <b><?= $sacarListaSesion["login"] ?></b><br><?= $sacarListaSesion["edad"] ?> años<br> <?= $sacarListaSesion["ubicacion"] ?>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
                 <div class="div2">
-                    <h3>Nuevos Usuarios</h3>
-                </div>
-                <div class="div3"> patata </div>
-                <div class="div4">
                     <h5 class="cabecera-detalles">Detalles</h5>
                     <hr>
                     <div class="detalles">
                         <div class="detalles1">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Relación Deseada</span>
-                            <p>No indicado</p>
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalRelacion" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Relación Deseada</span>
+                            <p id="detallesRelacion"><?= ($detalles->relacion == "" ? "No indicado" : $detalles->relacion) ?></p>
                         </div>
                         <div class="detalles2">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Signo del zodiaco</span>
-                            <p>No indicado</p>
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalSigno" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Signo del zodiaco</span>
+                            <p id="detallesSigno"><?= ($detalles->signo == "" ? "No indicado" : $detalles->signo) ?></p>
                         </div>
                         <div class="detalles3">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Pelo</span>
-                            <p>No indicado</p>
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalEstilo" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Estilo</span>
+                            <p id="detallesEstilo"><?= ($detalles->estilo == "" ? "No indicado" : $detalles->estilo) ?></p>
                         </div>
                         <div class="detalles4">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Me gusta comer</span>
-                            <p>No indicado</p>
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalComida" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Me gusta comer</span>
+                            <p id="detallesComida"><?= ($detalles->comida == "" ? "No indicado" : $detalles->comida) ?></p>
                         </div>
                         <div class="detalles5">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Hobbies</span>
-                            <p>No indicado</p>
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalHobbies" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Hobbies</span>
+                            <p id="detallesHobbies"><?= ($detalles->hobbies == "" ? "No indicado" : $detalles->hobbies) ?></p>
                         </div>
                         <div class="detalles6">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Profesión</span>
-                            <p>No indicado</p>
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalProfesion" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Profesión</span>
+                            <p id="detallesProfesion"><?= ($detalles->profesion == "" ? "No indicado" : $detalles->profesion) ?></p>
+                        </div>
+                        <div class="detalles7">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalDeportes" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Deportes</span>
+                            <p id="detallesDeportes"><?= ($detalles->deportes == "" ? "No indicado" : $detalles->deportes) ?></p>
+                        </div>
+                        <div class="detalles8">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalAlcohol" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Alcohol</span>
+                            <p id="detallesAlcohol"><?= ($detalles->alcohol == "" ? "No indicado" : $detalles->alcohol) ?></p>
+                        </div>
+                        <div class="detalles9">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalTabaco" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Tabaco</span>
+                            <p id="detallesTabaco"><?= ($detalles->tabaco == "" ? "No indicado" : $detalles->tabaco) ?></p>
+                        </div>
+                        <div class="detalles10">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalMedidas" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Medidas</span>
+                            <p id="detallesMedidas"><?= ($detalles->medidas == "" ? "No indicado" : $detalles->medidas) ?></p>
+                        </div>
+                        <div class="detalles11">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalTransporte" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Transporte</span>
+                            <p id="detallesTransporte"><?= ($detalles->transporte == "" ? "No indicado" : $detalles->transporte) ?></p>
+                        </div>
+                        <div class="detalles12">
+                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalMusica" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Música</span>
+                            <p id="detallesMusica"><?= ($detalles->musica == "" ? "No indicado" : $detalles->musica) ?></p>
                         </div>
                     </div>
-                </div>
-                <div class="div5">
-                    <h5 class="cabecera-detalles">Hobbies</h5>
+                    <h5 class="cabecera-detalles descripcion" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalDescripcion" <?php endif; ?>>Descripción&nbsp;&nbsp;&nbsp;&nbsp;<span><i class="fa fa-pencil" aria-hidden="true"></i></span></h5>
                     <hr>
-                    <div class="detalles">
-                        <div class="detalles1">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Deportes</span>
-                            <p>No indicado</p>
-                        </div>
-                        <div class="detalles2">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Instrumentos</span>
-                            <p>No indicado</p>
-                        </div>
-                        <div class="detalles3">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Animales</span>
-                            <p>No indicado</p>
-                        </div>
-                        <div class="detalles4">
-                            <span class="detalles-perfil" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>><i class="fa fa-pencil" aria-hidden="true"></i>Cultura</span>
-                            <p>No indicado</p>
-                        </div>
+                    <div class="cajaDescripcion">
+                        <span id="descripcionsobreti"><?php if ($perfil->sobreti == "") : ?><p style="color: black;">No indicado</p><?php else : ?>
+                                <pre><?= $perfil->sobreti ?></pre><?php endif; ?></span>
                     </div>
-                </div>
-                <div class="div6">
-                    <h5 class="cabecera-detalles descripcion" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#myModal" <?php endif; ?>>Descripción&nbsp;&nbsp;&nbsp;&nbsp;<span><i class="fa fa-pencil" aria-hidden="true"></i></span></h5>
+                    <h5 class="cabecera-detalles descripcion" <?php if ($perfil->login == $_SESSION["login"]) : ?>data-toggle="modal" data-target="#modalLoqueBusco" <?php endif; ?>>Lo que busco&nbsp;&nbsp;&nbsp;&nbsp;<span><i class="fa fa-pencil" aria-hidden="true"></i></span></h5>
                     <hr>
-                    <span><?= $perfil->sobreti ?></span>
+                    <div class="cajaDescripcion">
+                        <span id="descripcionloquebusco"><?php if ($perfil->loquebuscas == "") : ?><p style="color: black;">No indicado</p><?php else : ?>
+                                <pre><?= $perfil->loquebuscas ?></pre><?php endif; ?></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <form>
-        <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Modal Header</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Some text in the modal.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+    <!-- MODAL foto -->
+    <div class="modal fade" id="modalFoto" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white"><?= $perfil->login ?></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:White">&times;</span>
+                    </button>
                 </div>
-
+                <div class="modal-body">
+                    <img src="<?= $URL_PATH ?>/assets/fotosUsuarios/fotos<?= $perfil->genero ?>s/<?= $perfil->foto ?>"></img>
+                </div>
             </div>
         </div>
-    </form>
+    </div>
+    <!-- modal descripcion -->
+    <div class="modal fade" id="modalDescripcion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Descripción</h4>
+                </div>
+                <textarea id="textDescripcion"><?= $perfil->sobreti ?></textarea>
+                <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                    <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                    <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarDescripcionPerfil('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal lo que busco -->
+    <div class="modal fade" id="modalLoqueBusco" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Lo que busco</h4>
+                </div>
+                <textarea id="textloquebusco"><?= $perfil->loquebuscas ?></textarea>
+                <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                    <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                    <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarLoQueBusco('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal relacion deseada -->
+    <div class="modal fade" id="modalRelacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Relación deseada</h4>
+                </div>
+                <form name="formRelacion">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoRelacion" name="relacion" class="gustos1" onchange="" checked />
+                        <label for="noindicadoRelacion">No indicado</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="relacionseria" id="relacionseria" name="relacion" class="gustos1" onchange="" />
+                        <label for="relacionseria">Relación seria</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="noche" id="noche" name="relacion" class="gustos1" onchange="" />
+                        <label for="noche">Rollo de una noche</label><span></span>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarRelacion('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal profesion -->
+    <div class="modal fade" id="modalProfesion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Profesión</h4>
+                </div>
+                <textarea id="textprofesion"><?=$detalles->profesion?></textarea>
+                <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                    <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                    <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarProfesion('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal hobbies -->
+    <div class="modal fade" id="modalHobbies" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Hobbies</h4>
+                </div>
+                <textarea id="textHobbies"><?=$detalles->hobbies?></textarea>
+                <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                    <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                    <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarHobbies('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal medidas -->
+    <div class="modal fade" id="modalMedidas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Medidas</h4>
+                </div>
+                <form id="formMedidas">
+                    <label for="altura">Altura: &nbsp;</label><input type="range" id="altura" min="0" max="250"><span id="numAltura">125 cm</span><br><br>
+                    <label for="peso">Peso: &nbsp;&nbsp;&nbsp;</label><input type="range" id="peso" min="0" max="250"><span id="numPeso">125 kg</span>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarMedidas('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal alcohol -->
+    <div class="modal fade" id="modalAlcohol" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Alcohol</h4>
+                </div>
+                <form name="formAlcohol">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoAlcohol" name="alcohol" class="gustos1" onchange="" checked />
+                        <label for="noindicadoAlcohol">No indicado</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="nunca" id="nuncaAlcohol" name="alcohol" class="gustos1" onchange="" />
+                        <label for="nuncaAlcohol">Nunca</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="bastante" id="bastanteAlcohol" name="alcohol" class="gustos1" onchange="" />
+                        <label for="bastanteAlcohol">A menudo</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="aVeces" id="aVecesAlcohol" name="alcohol" class="gustos1" onchange="" />
+                        <label for="aVecesAlcohol">De vez en cuando</label><span></span>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarAlcohol('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal estilo -->
+    <div class="modal fade" id="modalEstilo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Estilo</h4>
+                </div>
+                <form name="formEstilo">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoEstilo" name="estilo" class="gustos1" onchange="" checked />
+                        <label for="noindicadoEstilo">No indicado</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="fiestero" id="nuncaEstilo" name="estilo" class="gustos1" onchange="" />
+                        <label for="nuncaEstilo">Fiestero</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="casa" id="bastanteEstilo" name="estilo" class="gustos1" onchange="" />
+                        <label for="bastanteEstilo">Estar en casa</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="viajero" id="aVecesEstilo" name="estilo" class="gustos1" onchange="" />
+                        <label for="aVecesEstilo">Viajero por el mundo</label><span></span>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarEstilo('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal Tabaco -->
+    <div class="modal fade" id="modalTabaco" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Tabaco</h4>
+                </div>
+                <form name="formTabaco">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoTabaco" name="tabaco" class="gustos1" onchange="" checked />
+                        <label for="noindicadoTabaco">No indicado</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="nunca" id="nuncaTabaco" name="tabaco" class="gustos1" onchange="" />
+                        <label for="nuncaTabaco">Nunca</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="bastante" id="bastanteTabaco" name="tabaco" class="gustos1" onchange="" />
+                        <label for="bastanteTabaco">A menudo</label><span></span>
+                    </div>
+                    <div class="chiller_cb">
+                        <input type="radio" value="aVeces" id="aVecesTabaco" name="tabaco" class="gustos1" onchange="" />
+                        <label for="aVecesTabaco">De vez en cuando</label><span></span>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarTabaco('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal Transporte -->
+    <div class="modal fade" id="modalTransporte" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Transporte</h4>
+                </div>
+                <form name="formTransporte">
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="noindicado" id="noindicadoTransporte" name="transporte" class="gustos1" onchange="" checked />
+                                    <label for="noindicadoTransporte">No indicado</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="pie" id="pieTransporte" name="transporte" class="gustos1" onchange="" />
+                                    <label for="pieTransporte">A pie</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="moto" id="motoTransporte" name="transporte" class="gustos1" onchange="" />
+                                    <label for="motoTransporte">Moto</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="coche" id="cocheTransporte" name="transporte" class="gustos1" onchange="" />
+                                    <label for="cocheTransporte">Coche</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="bici" id="biciTransporte" name="transporte" class="gustos1" onchange="" />
+                                    <label for="biciTransporte">Bici</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="skate" id="skateTransporte" name="transporte" class="gustos1" onchange="" />
+                                    <label for="skateTransporte">Skate</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarTransporte('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal Deportes -->
+    <div class="modal fade" id="modalDeportes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Deportes</h4>
+                </div>
+                <form name="formDeportes">
+                    <table>
+                        <div class="chiller_cb">
+                            <input type="radio" value="noindicado" id="noindicadoDeportes" name="deportes" class="gustos1" onchange="" checked />
+                            <label for="noindicadoTransporte">No indicado</label><span></span>
+                        </div>
+                        <td>
+                            <div class="chiller_cb">
+                                <input type="radio" value="Running" id="correr" name="deportes" class="gustos1" onchange="" />
+                                <label for="correr">Running</label><span></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="chiller_cb">
+                                <input type="radio" value="Danza" id="danza" name="deportes" class="gustos1" onchange="" />
+                                <label for="danza">Danza</label><span></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="chiller_cb">
+                                <input type="radio" value="Futbol" id="futbol" name="deportes" class="gustos1" onchange="" />
+                                <label for="futbol">Fútbol</label><span></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="chiller_cb">
+                                <input type="radio" value="Tenis" id="tenis" name="deportes" class="gustos1" onchange="" />
+                                <label for="tenis">Tenis</label><span></span>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Natacion" id="nadar" name="deportes" class="gustos1" onchange="" />
+                                    <label for="nadar">Natación</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Ciclismo" id="ciclismo" name="deportes" class="gustos1" onchange="" />
+                                    <label for="ciclismo">Ciclismo</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Skate" id="skate" name="deportes" class="gustos1" onchange="" />
+                                    <label for="skate">Skate</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Baloncesto" id="baloncesto" name="deportes" class="gustos1" onchange="" />
+                                    <label for="baloncesto">Baloncesto</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarDeportes('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal signo del zodiaco -->
+    <div class="modal fade" id="modalSigno" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Signo del zodiaco</h4>
+                </div>
+                <form name="formSigno">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoSigno" name="signo" class="gustos1" onchange="" checked />
+                        <label for="noindicadoSigno">No indicado</label><span></span>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Aries" id="aries" name="signo" class="gustos1" onchange="" />
+                                    <label for="aries">Aries</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Tauro" id="tauro" name="signo" class="gustos1" onchange="" />
+                                    <label for="tauro">Tauro</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Geminis" id="geminis" name="signo" class="gustos1" onchange="" />
+                                    <label for="geminis">Géminis</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Cancer" id="cancer" name="signo" class="gustos1" onchange="" />
+                                    <label for="cancer">Cáncer</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Leo" id="leo" name="signo" class="gustos1" onchange="" />
+                                    <label for="leo">Leo</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Virgo" id="virgo" name="signo" class="gustos1" onchange="" />
+                                    <label for="virgo">Virgo</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Libra" id="libra" name="signo" class="gustos1" onchange="" />
+                                    <label for="libra">Libra</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Escorpio" id="escorpio" name="signo" class="gustos1" onchange="" />
+                                    <label for="escorpio">Escorpio</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Sagitario" id="sagitario" name="signo" class="gustos1" onchange="" />
+                                    <label for="sagitario">Sagitario</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Capricornio" id="capricornio" name="signo" class="gustos1" onchange="" />
+                                    <label for="capricornio">Capricornio</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Acuario" id="acuario" name="signo" class="gustos1" onchange="" />
+                                    <label for="acuario">Acuario</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Piscis" id="piscis" name="signo" class="gustos1" onchange="" />
+                                    <label for="piscis">Piscis</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarSigno('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal Me gusta comer -->
+    <div class="modal fade" id="modalComida" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Me gusta comer</h4>
+                </div>
+                <form name="formComida">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoComida" name="comida" class="gustos1" onchange="" checked />
+                        <label for="noindicadoComida">No indicado</label><span></span>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Chino" id="chino" name="comida" class="gustos1" onchange="" />
+                                    <label for="chino">Chino</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Comida rapida" id="rapida" name="comida" class="gustos1" onchange="" />
+                                    <label for="rapida">Comida rápida</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Dulces" id="dulces" name="comida" class="gustos1" onchange="" />
+                                    <label for="dulces">Dulces</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Gastronomia" id="gastronomia" name="comida" class="gustos1" onchange="" />
+                                    <label for="gastronomia">Gastronomía</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Indio" id="indio" name="comida" class="gustos1" onchange="" />
+                                    <label for="indio">Indio</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Italiano" id="italiano" name="comida" class="gustos1" onchange="" />
+                                    <label for="italiano">Italiano</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Japones" id="japo" name="comida" class="gustos1" onchange="" />
+                                    <label for="japo">Japonés</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Kebab" id="kebab" name="comida" class="gustos1" onchange="" />
+                                    <label for="kebab">Kebab</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Oriental" id="oriental" name="comida" class="gustos1" onchange="" />
+                                    <label for="oriental">Oriental</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Platos regionales" id="regional" name="comida" class="gustos1" onchange="" />
+                                    <label for="regional">Platos regionales</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Tailandes" id="tailandes" name="comida" class="gustos1" onchange="" />
+                                    <label for="tailandes">Tailandés</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Tapas" id="tapas" name="comida" class="gustos1" onchange="" />
+                                    <label for="tapas">Tapas</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarComida('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal musica -->
+    <div class="modal fade" id="modalMusica" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center" style="background-color:#1c2228">
+                    <h4 class="modal-title w-100 font-weight-bold style-font" style="color:white">Música</h4>
+                </div>
+                <form name="formMusica">
+                    <div class="chiller_cb">
+                        <input type="radio" value="noindicado" id="noindicadoMusica" name="musica" class="gustos1" onchange="" checked />
+                        <label for="noindicadoMusica">No indicado</label><span></span>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Reggaeton" id="reggaeton" name="musica" class="gustos1" onchange="" />
+                                    <label for="reggaeton">Reggaeton</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Rock" id="rock" name="musica" class="gustos1" onchange="" />
+                                    <label for="rock">Rock</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Rap" id="rap" name="musica" class="gustos1" onchange="" />
+                                    <label for="Rap">Rap</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Tecno" id="tecno" name="musica" class="gustos1" onchange="" />
+                                    <label for="tecno">Tecno</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Leo" id="leo" name="musica" class="gustos1" onchange="" />
+                                    <label for="leo">Leo</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="House" id="house" name="musica" class="gustos1" onchange="" />
+                                    <label for="house">House</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Pop" id="pop" name="musica" class="gustos1" onchange="" />
+                                    <label for="pop">Pop</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Musica clasica" id="clasica" name="musica" class="gustos1" onchange="" />
+                                    <label for="clasica">Clásica</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Trap" id="trap" name="musica" class="gustos1" onchange="" />
+                                    <label for="trap">Trap</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Flamenco" id="flamenco" name="musica" class="gustos1" onchange="" />
+                                    <label for="flamenco">Flamenco</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Electronica" id="electro" name="musica" class="gustos1" onchange="" />
+                                    <label for="electro">Electrónica</label><span></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="chiller_cb">
+                                    <input type="radio" value="Heavy Metal" id="heavy" name="musica" class="gustos1" onchange="" />
+                                    <label for="heavy">Heavy Metal</label><span></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="modal-footer d-flex justify-content-center" style="background-color:#1c2228">
+                        <button type="button" class="btn btn-unique style-font" style="color:White" data-dismiss="modal" aria-label="Close">Cancelar <i class="far fa-times-circle"></i></button>
+                        <button class="btn btn-unique style-font" id="preboton" type="submit" data-dismiss="modal" aria-label="Close" style="color:White" onclick="modificarMusica('<?= $perfil->login ?>')">Enviar <i class="fas fa-paper-plane ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
-<!-- MODAL -->
+
+
 <?php \dawfony\Ti::extend("view/cabeceras/footerView.phtml"); ?>
 <?php \dawfony\Ti::endExtend(); ?>

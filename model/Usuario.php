@@ -15,9 +15,7 @@ class Usuario{
     public $validacion;
     public $activada;
     public $sobreti;
-    public $gustos;
     public $loquebuscas;
-    public $aficiones;
     public $apellidos;
     public $hechizos;
     public $rol_id;

@@ -5,7 +5,7 @@ global $login_url;
 /*facebookk*/
 require_once('configfb.php');
 $redirectTo = "http://localhost/sociallove/callbackphp"; //mandamos la peticion y a la vuelta va a este php
-$dataFb = ['email', 'user_birthday','user_gender','user_hometown','user_location']; //permissions
+$dataFb = ['email', 'user_birthday', 'user_gender', 'user_location']; //permissions
 $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y el email en fullURL
 /*facebookk*/
 
@@ -13,6 +13,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
 \dawfony\Ti::endExtend();
 
 ?>
+
 <body class="imagen-fondo-body" style="background-image: url('<?= $URL_PATH ?>/assets/fotosInterfaces/fondoBody.png');
     background-repeat: repeat;
     background-color: #fbf6f9;">
@@ -35,17 +36,18 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                             <ul class="mr-auto mt-2 mt-lg-0 navbar-nav sesion">
                                 <li class="nav-item ">
                                     <a class="nav-link" href="<?= $URL_PATH ?>/correo"><i class="fas fa-envelope"></i></a>
-                                    <span>
-                                        <!-- AQUI VA EL NUMERO DE NOTIFIACIONES RECIBIDAS, FONDO ROJO,NUMERO EN BLANCO,CON ANIMACION DE PARPADEO UNA VEZ ABIERTO DESAPARECE. --></span>
+                                    <?php if ($_SESSION['notificacionesCorreo'] > 0) : ?>
+                                        <span id="NotifyMail" class="num-notificaciones-correo"></span>
+                                    <?php endif; ?>
                                 </li>
                                 &nbsp;
                                 <li class="nav-item">
                                     <!-- falta hacer las notificaciones como el carrito compra que salga abajo si hay gente que te ha visitado -->
                                     <div class="header-mini-cart  pull-left open" id="formCompra">
-                                        <span class="nav-link dropdown-toggle" height="70px" width="70px" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="verNotificaciones()"><i class="fas fa-bell"></i></span>
+                                        <span class="nav-link dropdown-toggle" height="70px" width="70px" href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i></span>
                                         <?php if ($_SESSION['notificaciones'] > 0) : ?>
-                                            <span class="num-notificaciones"><?= $_SESSION['notificaciones'] ?></span>
-                                            <?php endif; ?>
+                                            <span class="num-notificaciones"></span>
+                                        <?php endif; ?>
                                         <div class="dropdown-menu shopping-cart-content pull-right notificaciones">
                                             <div class="shopping-cart-items">
                                                 <div class="lg-left">
@@ -65,7 +67,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                                     </div>
                                 </li>
                             </ul>
-                            <form  class="form-inline my-2 my-lg-1 formArreglo" action="<?= $URL_PATH ?>/busqueda" onsubmit="return validarBusqueda()" method="Get">
+                            <form class="form-inline my-2 my-lg-1 formArreglo" action="<?= $URL_PATH ?>/busqueda" onsubmit="return validarBusqueda()" method="Get">
                                 <input type="text" name="busquedaUsuario" id="busqueda" onkeypress="return buscarUsuario()" aria-label="Search" class="form-control form-control mr-sm-1" placeholder="Búsqueda por gustos,nombre,ubicacion o aficiones ">
                                 <button type="submit" class="btn btn-outline-light my-2 my-sm-0"><i class="fas fa-search "></i></button>
                             </form>
@@ -123,7 +125,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
                                     });
                                 </script>
                             <?php endif; ?>
-                            <form  class="form-inline formArreglo" action="<?= $URL_PATH ?>/login" method="post">
+                            <form class="form-inline formArreglo" action="<?= $URL_PATH ?>/login" method="post">
                                 <div class="form-group">
                                     <div class="form-group  mb-2">
                                         <input class="form-control form-control-sm" type="text" onchange="comprobarlogin()" id="mail" name="email" placeholder="correo electrónico" value="<?php if (isset($_COOKIE["usuario"])) : ?><?= $_COOKIE["usuario"]; ?> <?php endif ?>" required>
@@ -203,7 +205,7 @@ $fullURL = $handler->getLoginUrl($redirectTo, $dataFb);  //metemos el redirect y
         <?php \dawfony\Ti::endBlock(); ?>
 
         <!-- ********************** Modal registro ******************************************* -->
-        <form  action="<?= $URL_PATH ?>/postregistro" method="post" id="formuModal">
+        <form action="<?= $URL_PATH ?>/postregistro" method="post" id="formuModal">
             <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">

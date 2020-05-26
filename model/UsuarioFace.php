@@ -19,8 +19,7 @@
     public $validacion;
     public $activada;
     public $sobreti;
-    public $gustos;
     public $loquebuscas;
-    public $aficiones;
+
         
 }
