@@ -122,6 +122,8 @@ class UserController extends Controller
             $usuario->foto = substr("$nombreFoto", 0, 31);
             $extension = substr($_FILES["foto"]["type"], 6);
             $usuario->foto = "$usuario->foto.$extension";
+        }else {
+            $usuario->foto = $_FILES["foto"]["name"];
         }
 
 
